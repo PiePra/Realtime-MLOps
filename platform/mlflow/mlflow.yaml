@@ -58,7 +58,7 @@ spec:
               "server",
               "--host", "0.0.0.0",
               "--port", "5000",
-              "--default-artifact-root", "s3://minio.mlflow.svc.cluster.local/mlflow",
+              "--default-artifact-root", "s3://mlflow-minio.mlflow.svc.cluster.local/mlflow",
               "--backend-store-uri", 'postgresql+psycopg2://mlflow:mlflow@postgres-postgresql.mlflow.svc.cluster.local:5432/mlflow'
           ]
           ports:
