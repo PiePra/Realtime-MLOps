@@ -1,0 +1,5 @@
+resources:
+- namespace.yaml
+- minio.yaml
+- postgres.yaml
+- mlflow.yaml

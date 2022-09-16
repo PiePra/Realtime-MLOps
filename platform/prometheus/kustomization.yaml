@@ -1,0 +1,8 @@
+resources:
+- namespace.yaml
+- https://github.com/prometheus-operator/prometheus-operator/releases/download/v0.59.1/bundle.yaml
+- rbac.yaml
+- prometheus-cluster.yaml
+- kserve_monitor.yaml
+- grafana.yaml
+namespace: prometheus

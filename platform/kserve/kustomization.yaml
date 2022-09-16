@@ -1,0 +1,4 @@
+resources:
+- cert-manager.yaml
+- kserve.yaml
+- kserve-runtimes.yaml

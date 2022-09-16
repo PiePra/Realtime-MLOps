@@ -1,0 +1,6 @@
+resources:
+- eventing-core.yaml
+- eventing-kafka-controller.yaml
+- eventing-kafka-broker.yaml
+- kafka-broker-config.yaml
+- config-br-defaults.yaml

@@ -1,0 +1,16 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: data-service
+spec:
+  schedule: "*/1 * * * *"
+  successfulJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: get-data
+            image: curlimages/curl
+            args: ["curl", "-X", "GET", "http://data-service.default.svc.cluster.local:5000/btc"]
+          restartPolicy: Never

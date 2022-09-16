@@ -1,0 +1,6 @@
+resources:
+- kafka.yaml
+- strimzi.yaml
+- strimzi_crds.yaml
+- strimzi-operator.yaml
+- cluster.yaml

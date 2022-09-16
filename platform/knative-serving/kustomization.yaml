@@ -1,0 +1,3 @@
+resources:
+- serving-core.yaml
+- net-istio.yaml
