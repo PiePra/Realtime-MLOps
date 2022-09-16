@@ -9,6 +9,9 @@ spec:
     securityContext:
       fsGroup: 65532
   workspaces:
+  - name: docker-credentials
+    secret:
+      secretName: docker-credentials
   - name: shared-data
     volumeClaimTemplate:
       spec:
@@ -19,4 +22,8 @@ spec:
             storage: 1Gi
   params:
   - name: repo-url
-    value: https://github.com/google/docsy-example.git
+    value: https://github.com/PiePra/Realtime-MLOps
+  - name: image-reference
+    value: docker.io/piepra/data-service:1.0
+  - name: context-reference
+    value: ./demonstration/apps/data-service/

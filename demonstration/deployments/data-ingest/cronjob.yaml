@@ -1,10 +1,10 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: data-service
+  name: data-service-trigger
 spec:
   schedule: "*/1 * * * *"
-  successfulJobsHistoryLimit: 3
+  successfulJobsHistoryLimit: 2
   jobTemplate:
     spec:
       template:
