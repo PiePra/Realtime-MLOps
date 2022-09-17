@@ -25,7 +25,7 @@ sudo sysctl fs.inotify.max_user_instances=512
 
 Generate and create platform manifests on Kubuernetes using kustomize.
 ```bash
-kubectl kustomize ./platform | kubectl create -f -
+kubectl kustomize --enable-helm ./platform | kubectl create -f -
 ```
 Wait for all resources to be ready.
 ```bash

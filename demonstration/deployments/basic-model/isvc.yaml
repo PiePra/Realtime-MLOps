@@ -1,0 +1,16 @@
+
+apiVersion: "serving.kserve.io/v1beta1"
+kind: "InferenceService"
+metadata:
+  name: "bitcoin-forecast"
+  namespace: default
+  labels:
+    networking.knative.dev/visibility: cluster-local
+spec:
+  predictor:
+    serviceAccountName: sa-s3
+    model:
+      modelFormat:
+        name: mlflow
+      protocolVersion: v2
+      storageUri: s3://mlflow/1/0b818ac4ddb24e48b121c874862c53d0/artifacts/model
