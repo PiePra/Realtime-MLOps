@@ -50,7 +50,7 @@ Web interfaces then are available at:
 - grafana: http://grafana.prometheus.svc.cluster.local:3000/
 - tekton: http://tekton-dashboard.tekton-pipelines.svc.cluster.local:9097
 - mlflow: http://mlflow.mlflow.svc.cluster.local/
-- minio: http://minio.mlflow.svc.cluster.local:9000/
+- minio: http://mlflow-minio.mlflow.svc.cluster.local:9000/
 
 due to timeouts or changes to services it is required to run
 ```
