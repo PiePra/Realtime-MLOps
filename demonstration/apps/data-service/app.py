@@ -13,6 +13,7 @@ def get_btc():
     "source": "https://example.com/event-producer",
     }
     r = requests.get('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT')
+    print("test")
     data = {"price": float(r.json()['price']), "timestamp": datetime.now().timestamp()}
     event = CloudEvent(attributes, data)
     headers, body = to_structured(event)

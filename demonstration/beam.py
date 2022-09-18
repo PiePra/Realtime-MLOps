@@ -1,7 +1,7 @@
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from more_itertools import first
-
+from apache_beam.io.kafka import ReadFromKafka
 
 class AddTimestampDoFn(beam.DoFn):
   def process(self, element):
@@ -34,14 +34,8 @@ def last(iterable, default=_marker):
 
 beam_options = PipelineOptions()
 with beam.Pipeline() as p:
-    data =  p | 'Generate Data' >> beam.Create([
-        {"key": "btc", "price":19976.07,"timestamp":1662057603},
-        {"key": "btc","price":19977.07,"timestamp":1662056503.234},
-        {"key": "btc","price":19978.07,"timestamp":1662057503.234},
-        {"key": "btc","price":19979.07,"timestamp":1662058503.234},
-        {"key": "btc","price":19977.07,"timestamp":1662055950.234},
-        {"key": "btc","price":19975.07,"timestamp":1662056003.234}
-        ])
+    data =  p | 'Read Stream' >> ReadFromKafka(consumer_config={'bootstrap.servers': '10.89.0.200:9092'},
+            topics=["knative-broker-default-btc"])
     timestamped_data = data | 'To time' >> beam.ParDo(AddTimestampDoFn())
     windowed_data = timestamped_data | 'To windows' >> beam.WindowInto(beam.window.Sessions(24 * 60 * 60))
     grouped_data = windowed_data | 'Group' >> beam.GroupByKey() 
@@ -49,3 +43,14 @@ with beam.Pipeline() as p:
     low = windowed_data | 'Low' >> beam.CombineGlobally(max).without_defaults() | 'Print low' >> beam.FlatMap(print)
     open = windowed_data | 'Open' >> beam.CombineGlobally(first).without_defaults() | 'Print open' >> beam.FlatMap(print)
     close = windowed_data | 'Close' >> beam.CombineGlobally(last).without_defaults() | 'Print close' >> beam.FlatMap(print)
+
+
+
+#        ([
+#        {"key": "btc", "price":19976.07,"timestamp":1662057603},
+#        {"key": "btc","price":19977.07,"timestamp":1662056503.234},
+#        {"key": "btc","price":19978.07,"timestamp":1662057503.234},
+#        {"key": "btc","price":19979.07,"timestamp":1662058503.234},
+#        {"key": "btc","price":19977.07,"timestamp":1662055950.234},
+#        {"key": "btc","price":19975.07,"timestamp":1662056003.234}
+#        ])    

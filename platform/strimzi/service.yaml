@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: streaming-system-kafka-0
+  namespace: kafka
+spec:
+  type: ClusterIP
+  ports:
+  - protocol: TCP
+    port: 9092
+    name: kafka
+    targetPort: 9092
+  selector:
+    app.kubernetes.io/instance: streaming-system
+    app.kubernetes.io/managed-by: strimzi-cluster-operator
+    app.kubernetes.io/name: kafka

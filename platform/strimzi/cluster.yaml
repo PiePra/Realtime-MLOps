@@ -21,6 +21,14 @@ spec:
         port: 9094
         type: nodeport
         tls: false
+        configuration:
+          bootstrap:
+            nodePort: 30000
+          brokers:
+          - broker: 0
+            nodePort: 30001
+            advertisedPort: 9094
+            advertisedHost: streaming-system-kafka-0.kafka.svc.cluster.local
     storage:
       type: jbod
       volumes:
