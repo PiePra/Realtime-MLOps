@@ -1,11 +1,15 @@
 
-
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import io.cloudevents.CloudEvent;
+import io.cloudevents.kafka.CloudEventDeserializer;
+
+import org.json.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,12 +31,12 @@ public class Consumer {
         Properties properties = new Properties();
         properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, CloudEventDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
         // create consumer
-        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties);
+        KafkaConsumer<String, CloudEvent> consumer = new KafkaConsumer<>(properties);
 
         // get a reference to the current thread
         final Thread mainThread = Thread.currentThread();
@@ -58,15 +62,16 @@ public class Consumer {
             consumer.subscribe(Arrays.asList(topic));
 
             // poll for new data
-            while (true) {
-                ConsumerRecords<String, String> records =
-                        consumer.poll(Duration.ofMillis(100));
+        while (true) {
 
-                for (ConsumerRecord<String, String> record : records) {
-                    log.info("Key: " + record.key() + ", Value: " + record.value());
-                    log.info("Partition: " + record.partition() + ", Offset:" + record.offset());
-                }
+            ConsumerRecords<String, CloudEvent> records =
+                    consumer.poll(Duration.ofMillis(100));
+            for (ConsumerRecord<String, CloudEvent> record : records) {
+                byte[] bytes = record.value().getData().toBytes();
+                String body = new String(bytes, "UTF-8");
+                System.out.println(body);
             }
+        }
 
         } catch (WakeupException e) {
             log.info("Wake up exception!");
