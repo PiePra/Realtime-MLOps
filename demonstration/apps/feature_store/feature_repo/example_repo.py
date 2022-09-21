@@ -27,19 +27,19 @@ crypto = Entity(name="crypto", join_keys=["symbol"])
 # production, you can use your favorite DWH, such as BigQuery. See Feast documentation
 # for more info.
 
-#crypto_source = PostgreSQLSource(
-#    name="crypto_source",
-#    query="SELECT * FROM crypto_source",
-#    timestamp_field="timestamp",
-#    created_timestamp_column="created_timestamp"
-#)
-
-crypto_source = FileSource(
+crypto_source = PostgreSQLSource(
     name="crypto_source",
-    path="/home/pierre/Realtime-MLOps/demonstration/apps/feature_store/feature_repo/data/BTC-2021min.parquet",
+    query="SELECT * FROM crypto_source",
     timestamp_field="timestamp",
-    created_timestamp_column="timestamp_created",
+    created_timestamp_column="timestamp_created"
 )
+
+#crypto_source = FileSource(
+#    name="crypto_source",
+#    path="/home/pierre/Realtime-MLOps/demonstration/apps/feature_store/feature_repo/data/BTC-2021min.parquet",
+#    timestamp_field="timestamp",
+#    created_timestamp_column="timestamp_created",
+#)
 
 # Our parquet files contain sample data that includes a driver_id column, timestamps and
 # three feature column. Here we define a Feature View that will allow us to serve this
