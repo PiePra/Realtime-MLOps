@@ -1,0 +1,38 @@
+apiVersion: "serving.kserve.io/v1beta1"
+kind: "InferenceService"
+metadata:
+  name: "bitcoin-forecast"
+  namespace: default
+  labels:
+    networking.knative.dev/visibility: cluster-local
+spec:
+  transformer:
+    containers:
+    - image: piepra/feast-transformer:0.1
+      name: driver-container
+      command:
+      - "python"
+      - "app/app.py"
+      args:
+      - --feast_serving_url
+      - feature-store-feature-server.feast.svc.cluster.local:6566
+      - --entity_ids
+      - "BTC/USD"
+      - --feature_refs
+      - "crypto_stats:open"
+      - "crypto_stats:high"
+      - "crypto_stats:low"
+      - "crypto_stats:close"
+  predictor:
+    serviceAccountName: sa-s3
+    model:
+      modelFormat:
+        name: mlflow
+      protocolVersion: v2
+      storageUri: s3://mlflow/1/8207a36e46c24039b993b96f16bcc185/artifacts/model
+
+
+
+
+
+
