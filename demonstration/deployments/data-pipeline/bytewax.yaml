@@ -6,11 +6,11 @@ data:
     TestingInputConfig\nfrom bytewax.outputs import StdOutputConfig, ManualOutputConfig\nfrom
     bytewax.window import (SystemClockConfig, TumblingWindowConfig, TestingClockConfig)\nfrom
     feast import FeatureStore\nfrom bytewax.window import ClockConfig\n\ndef get_message(msg):\n
-    \   key, val = msg\n    key = json.loads(val) \n    msg = key\n    yield (\"btc\",
+    \   key, val = msg\n    key = json.loads(val) \n    msg = key\n    yield (msg[\"symbol\"],
     (msg[\"price\"], msg[\"timestamp\"]))  \n\ndef append_price(prices, price):\n
     \   prices.append(price)\n    return prices\n\ndef get_vals(msg):\n    key, msg
     = msg\n    prices = [item[0] for item in msg]\n    timestamps = [item[1] for item
-    in msg]\n\n    output = pd.DataFrame([{\n        \"symbol\": \"BTC/USD\",\n        \"low\":
+    in msg]\n\n    output = pd.DataFrame([{\n        \"symbol\": key,\n        \"low\":
     min(prices),\n        \"high\": max(prices),\n        \"open\": prices[0],\n        \"close\":
     prices[-1],\n        \"timestamp\": datetime.now().timestamp(),\n        \"timestamp_created\":
     timestamps[-1]\n    }])\n    output[\"timestamp\"] = output[\"timestamp\"].astype('datetime64[s]')\n
@@ -164,6 +164,8 @@ spec:
           mountPath: /var/bytewax/
         - name: python-files
           mountPath: /tmp/bytewax/
+        - name: feature-store
+          mountPath: /bytewax
       terminationGracePeriodSeconds: 10
       containers:
       - name: process    
@@ -221,3 +223,9 @@ spec:
           name: bytewax
       - name: working-directory
         emptyDir: {}
+      - name: feature_store
+        configMap:
+          name: feature-store
+          items:
+          - key: feature_store.yaml
+

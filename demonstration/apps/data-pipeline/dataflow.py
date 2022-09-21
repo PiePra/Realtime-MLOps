@@ -15,7 +15,7 @@ def get_message(msg):
     key, val = msg
     key = json.loads(val) 
     msg = key
-    yield ("btc", (msg["price"], msg["timestamp"]))  
+    yield (msg["symbol"], (msg["price"], msg["timestamp"]))  
 
 def append_price(prices, price):
     prices.append(price)
@@ -27,7 +27,7 @@ def get_vals(msg):
     timestamps = [item[1] for item in msg]
 
     output = pd.DataFrame([{
-        "symbol": "BTC/USD",
+        "symbol": key,
         "low": min(prices),
         "high": max(prices),
         "open": prices[0],
