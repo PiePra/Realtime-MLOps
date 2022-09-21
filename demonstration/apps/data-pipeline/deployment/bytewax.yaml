@@ -16,7 +16,7 @@ data:
     timestamps[-1]\n    }])\n    output[\"timestamp\"] = output[\"timestamp\"].astype('datetime64[s]')\n
     \   output[\"timestamp_created\"] = output[\"timestamp_created\"].astype('datetime64[s]')\n
     \   return output\n\ndef output_builder(worker_index, worker_count):\n    store
-    = FeatureStore('.')\n    engine = create_engine('postgresql://feast:feast@offline-store-postgresql.feast.svc.cluster.local:5432/feast')\n
+    = FeatureStore('./feature-repo')\n    engine = create_engine('postgresql://feast:feast@offline-store-postgresql.feast.svc.cluster.local:5432/feast')\n
     \   def write(item):\n        store.write_to_online_store(\"crypto_stats\", item,
     allow_registry_cache = True)\n        # Write to offline store for posotgres not
     implemented in feast 0.25 yet\n        #store.write_to_offline_store(\"crypto_stats\",
@@ -26,7 +26,7 @@ data:
     = TestingClockConfig(start_at=datetime(2022, 1, 1, 13), item_incr = timedelta(minutes=1))\n
     \   cc = SystemClockConfig()\n    wc = TumblingWindowConfig(length=timedelta(minutes=5))\n
     \   input_config = KafkaInputConfig([\"streaming-system-kafka-0.kafka.svc.cluster.local:9094\"],
-    \"knative-broker-default-btc\", tail=True, starting_offset=\"end\")\n    flow
+    \"knative-broker-default-crypto\", tail=True, starting_offset=\"end\")\n    flow
     = Dataflow()\n    flow.input(\"input\", input_config)\n    flow.flat_map(get_message)\n
     \   flow.fold_window(\"session_state_recovery\", cc, wc, list, append_price)\n
     \   flow.map(get_vals)\n    flow.capture(ManualOutputConfig(output_builder))\n
@@ -164,12 +164,10 @@ spec:
           mountPath: /var/bytewax/
         - name: python-files
           mountPath: /tmp/bytewax/
-        - name: feature-store
-          mountPath: /bytewax
       terminationGracePeriodSeconds: 10
       containers:
       - name: process    
-        image: "bytewax/bytewax:latest"
+        image: "docker.io/piepra/bytewax:0.11.2-python3.8"
         imagePullPolicy: Always
         command: ["sh","-c","sh ./entrypoint.sh"]
         ports:
@@ -215,6 +213,9 @@ spec:
           mountPath: /etc/bytewax
         - name: working-directory
           mountPath: /var/bytewax/
+        - name: feature-store
+          mountPath: /var/bytewax/feature-repo/feature_store.yaml
+          subPath: feature_store.yaml
       volumes:
       - name: hostfile
         emptyDir: {}
@@ -223,9 +224,7 @@ spec:
           name: bytewax
       - name: working-directory
         emptyDir: {}
-      - name: feature_store
+      - name: feature-store
         configMap:
           name: feature-store
-          items:
-          - key: feature_store.yaml
 

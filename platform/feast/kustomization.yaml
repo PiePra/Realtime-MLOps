@@ -1,6 +1,7 @@
 resources:
 - namespace.yaml
 - postgres.yaml
+- feature_store.yaml
 helmCharts:
 - name: feast-feature-server
   repo: https://feast-helm-charts.storage.googleapis.com

@@ -14,12 +14,14 @@ attributes = {
 def get_btc():
     r = requests.get('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT')
     data = {"price": float(r.json()['price']), "timestamp": datetime.now().timestamp(), "symbol": "BTC/USD"}
+    post_event(data)
     return "success"
 
 @app.route("/eth")
 def get_eth():
     r = requests.get('https://api.binance.com/api/v3/ticker/price?symbol=ETHUSDT')
     data = {"price": float(r.json()['price']), "timestamp": datetime.now().timestamp(), "symbol": "ETH/USD"}
+    post_event(data)
     return "success"
 
 def post_event(data):

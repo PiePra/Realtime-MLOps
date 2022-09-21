@@ -1,5 +1,5 @@
 apiVersion: eventing.knative.dev/v1
 kind: Broker
 metadata:
- name: btc
+ name: crypto
  namespace: default
