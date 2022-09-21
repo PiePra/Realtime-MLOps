@@ -13,7 +13,7 @@ registry:
 provider: local
 online_store:
     type: redis
-    connection_string: online-store-redis-master.feast.svc.cluster.local:6379,password=AOVAlMOfAt
+    connection_string: online-store-redis-master.feast.svc.cluster.local:6379
 offline_store:
     type: postgres
     host: offline-store-postgresql.feast.svc.cluster.local
