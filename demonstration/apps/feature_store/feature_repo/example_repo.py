@@ -1,20 +1,13 @@
-# This is an example feature definition file
-
 from datetime import timedelta
-
-import pandas as pd
 
 from feast import (
     Entity,
     FeatureService,
     FeatureView,
     Field,
-    FileSource,
     PushSource,
-    RequestSource,
 )
-from feast.on_demand_feature_view import on_demand_feature_view
-from feast.types import Float32, Float64, Int64
+from feast.types import Float32
 from feast.infra.offline_stores.contrib.postgres_offline_store.postgres_source import (
     PostgreSQLSource,
 )
@@ -63,44 +56,9 @@ crypto_fv = FeatureView(
     source=crypto_source,
     # Tags are user defined key/value pairs that are attached to each
     # feature view
-    tags={"team": "driver_performance"},
+    tags={"team": "crypto"},
 )
 
-## Define a request data source which encodes features / information only
-## available at request time (e.g. part of the user initiated HTTP request)
-#input_request = RequestSource(
-#    name="vals_to_add",
-#    schema=[
-#        Field(name="val_to_add", dtype=Int64),
-#        Field(name="val_to_add_2", dtype=Int64),
-#    ],
-#)
-
-
-## Define an on demand feature view which can generate new features based on
-## existing feature views and RequestSource features
-#@on_demand_feature_view(
-#    sources=[driver_stats_fv, input_request],
-#    schema=[
-#        Field(name="conv_rate_plus_val1", dtype=Float64),
-#        Field(name="conv_rate_plus_val2", dtype=Float64),
-#    ],
-#)
-#def transformed_conv_rate(inputs: pd.DataFrame) -> pd.DataFrame:
-#    df = pd.DataFrame()
-#    df["conv_rate_plus_val1"] = inputs["conv_rate"] + inputs["val_to_add"]
-#    df["conv_rate_plus_val2"] = inputs["conv_rate"] + inputs["val_to_add_2"]
-#    return df
-
-
-# This groups features into a model version
-#driver_activity_v1 = FeatureService(
-#    name="driver_activity_v1",
-#    features=[
-#        driver_stats_fv[["conv_rate"]],  # Sub-selects a feature from a feature view
-#        transformed_conv_rate,  # Selects all features from the feature view
-#    ],
-#)
 crypto_sv = FeatureService(
     name="crypto_stats", features=[crypto_fv])
 
@@ -109,42 +67,3 @@ crypto_push_source = PushSource(
     name="crypto_push_source",
     batch_source=crypto_source,
 )
-
-# Defines a slightly modified version of the feature view from above, where the source
-# has been changed to the push source. This allows fresh features to be directly pushed
-# to the online store for this feature view.
-#driver_stats_fresh_fv = FeatureView(
-#    name="crypto_fresh",
-#    entities=[driver],
-#    ttl=timedelta(days=1),
-#  #   schema=[
-#       Field(name="conv_rate", dtype=Float32),
-#        Field(name="acc_rate", dtype=Float32),
-#        Field(name="avg_daily_trips", dtype=Int64),
-#    ],
-#    online=True,
-#    source=driver_stats_push_source,  # Changed from above
-#    tags={"team": "driver_performance"},
-#)
-
-
-# Define an on demand feature view which can generate new features based on
-# existing feature views and RequestSource features
-#@on_demand_feature_view(
-#    sources=[driver_stats_fresh_fv, input_request],  # relies on fresh version of FV
-#    schema=[
-#        Field(name="conv_rate_plus_val1", dtype=Float64),
-#        Field(name="conv_rate_plus_val2", dtype=Float64),
-#    ],
-#)
-#def transformed_conv_rate_fresh(inputs: pd.DataFrame) -> pd.DataFrame:
-#    df = pd.DataFrame()
-#    df["conv_rate_plus_val1"] = inputs["conv_rate"] + inputs["val_to_add"]
-#    df["conv_rate_plus_val2"] = inputs["conv_rate"] + inputs["val_to_add_2"]
-#    return df
-
-
-#driver_activity_v3 = FeatureService(
-#    name="driver_activity_v3",
-#    features=[driver_stats_fresh_fv, transformed_conv_rate_fresh],
-#)
