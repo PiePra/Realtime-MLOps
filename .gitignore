@@ -2,7 +2,6 @@ secret.yaml
 target
 .idea
 .vscode
-feast
 .ipynb_checkpoints
 __pycache__
 charts
