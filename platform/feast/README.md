@@ -27,7 +27,7 @@ cd to feature_repo
 run feast apply
 `feast apply`
 
-# Check Database
+# Check database
 Login to postgres (password: feast)
 `psql -U feast -h offline-store-postgresql.feast.svc.cluster.local -d feast`
 Check tables
@@ -37,3 +37,6 @@ Check offline source
 Quit
 `\q`
 
+# Populate the online store
+
+Run the "Read and Write online Features" in the notebook. 

@@ -5,4 +5,5 @@ resources:
 - prometheus-cluster.yaml
 - kserve_monitor.yaml
 - grafana.yaml
+- service.yaml
 namespace: prometheus
