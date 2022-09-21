@@ -1,15 +1,15 @@
+# Test Inference Service
+
 apiVersion: "serving.kserve.io/v1beta1"
 kind: "InferenceService"
 metadata:
-  name: "basic-bitcoin-forecast"
-  namespace: default
+  name: "mlflow-v2-wine-classifier2"
   labels:
     networking.knative.dev/visibility: cluster-local
 spec:
   predictor:
-    serviceAccountName: sa-s3
     model:
       modelFormat:
         name: mlflow
       protocolVersion: v2
-      storageUri: s3://mlflow/1/8207a36e46c24039b993b96f16bcc185/artifacts/model
+      storageUri: "gs://kfserving-examples/models/mlflow/wine"

@@ -53,8 +53,9 @@ def output_builder(worker_index, worker_count):
 
 if __name__ == "__main__":
     cc = TestingClockConfig(start_at=datetime(2022, 1, 1, 13), item_incr = timedelta(minutes=1))
+    cc = SystemClockConfig()
     wc = TumblingWindowConfig(length=timedelta(minutes=5))
-    input_config = KafkaInputConfig(["streaming-system-kafka-0.kafka.svc.cluster.local:9094"], "knative-broker-default-btc", tail=True, starting_offset="beginning")
+    input_config = KafkaInputConfig(["streaming-system-kafka-0.kafka.svc.cluster.local:9094"], "knative-broker-default-btc", tail=True, starting_offset="end")
     flow = Dataflow()
     flow.input("input", input_config)
     flow.flat_map(get_message)
