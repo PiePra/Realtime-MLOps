@@ -1,5 +1,7 @@
 secret.yaml
 target
 .idea
-settings.json
+.vscode
 feast
+.ipynb_checkpoints
+__pycache__

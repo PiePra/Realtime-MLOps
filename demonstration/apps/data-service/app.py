@@ -14,7 +14,7 @@ def get_btc():
     }
     r = requests.get('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT')
     print("test")
-    data = {"price": float(r.json()['price']), "timestamp": datetime.now().timestamp()}
+    data = {"price": float(r.json()['price']), "timestamp": datetime.now().timestamp(), "symbol": "BTC/USD"}
     event = CloudEvent(attributes, data)
     headers, body = to_structured(event)
     requests.post("http://kafka-broker-ingress.knative-eventing.svc.cluster.local/default/btc", data=body, headers=headers)
