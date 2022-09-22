@@ -8,18 +8,18 @@ Start jupyter lab in a terminal
 `jupyter lab`
 
 Open the Helper Notebook
-`demonstration/apps/feature_store/helper.ipynb`
+`demonstration/feature_store/helper.ipynb`
 
 Run the "CSV to SQL" to create table at offline store
 
 # Populate feast infrastructure
 
 cd to feature_repo
-`cd demonstration/apps/feature_store/feature_repo`
+`cd demonstration/feature_store/feature_repo`
 run feast apply
 `feast apply`
 go back to main directory
-`cd ../../../../`
+`cd ../../../`
 
 
 # Check database

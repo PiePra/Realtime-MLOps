@@ -1,4 +1,5 @@
 resources:
 - kserve.yaml
 - kserve-runtimes.yaml
+- addressable-resolver.yaml
 - s3-sa.yaml

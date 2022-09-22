@@ -1,0 +1,14 @@
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: btc-prediction
+spec:
+  broker: crypto-prediction
+  filter:
+    attributes:
+      type: cluster.local.predict_btc
+  subscriber:
+    ref:
+      apiVersion: serving.kserve.io/v1beta1
+      kind: InferenceService
+      name: bitcoin-forecast

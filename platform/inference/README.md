@@ -8,16 +8,16 @@ wait for all resources to be ready
 
 # Test Model Serving
 Apply an inferencesverice
-`kubectl apply -f demonstration/apps/basic-model/deployment`
+`kubectl apply -f demonstration/basic-model/deployment`
 Wait till it becomes ready (takes some minutes)
 `watch kubectl get isvc`
 
 check the url 
-`http://mlflow-v2-wine-classifier2-predictor-default.default.svc.cluster.local/v2`
+`http://bitcoin-forecast.default.svc.cluster.localk/v2`
 
 test the model
 ```bash
-curl -v -H "bitcoin-forecast.default.svc.cluster.local" -H "Content-Type: application/json" -d @demonstration/apps/basic-model/payload.json \
+curl -v -H "bitcoin-forecast.default.svc.cluster.local" -H "Content-Type: application/json" -d @demonstration/basic-model/payload.json \
  http://bitcoin-forecast.default.svc.cluster.local/v2/models/bitcoin-forecast/infer 
 ```
 

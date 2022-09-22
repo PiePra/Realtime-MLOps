@@ -107,11 +107,7 @@ class CryptoTransformer(kserve.Model):
         r = requests.post("http://" + self.feast_serving_url + "/get-online-features/", data=json_params, headers=headers)
         logging.info("The online feature rest request status is %s", r.status_code)
         features = r.json()
-        logging.error(f"input: {input}")
-        logging.error(f"features: {features}")
         outputs = self.buildPredictRequest(inputs, features)
-        logging.error(f"outputs: {outputs}")
-
         logging.info("The input for model predict is %s", outputs)
 
         return outputs
@@ -129,4 +125,4 @@ class CryptoTransformer(kserve.Model):
         # if self.protocol == "grpc-v2":
         #     response = InferResult(inputs)
         #     return response.get_response(as_json=True)
-        return 
+        return inputs

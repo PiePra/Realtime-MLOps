@@ -8,7 +8,7 @@ wait for all resources (inlcuding kafkacluster in namespace kafka) to be ready
 
 # Test Streaming System
 create a python service and a knative-broker to start ingesting events into the broker
-`kubectl apply -f demonstration/apps/data-service/deployment`
+`kubectl apply -f demonstration/data-service/deployment`
 
 inspect incoming events (new events every minute). Start a bash in the kafka container.
 `kubectl exec -it -n kafka streaming-system-kafka-0 -- bash`
@@ -22,7 +22,7 @@ and exit
 # Apply Streaming Data Pipeline
 
 Create the bytewax deployment
-`kubectl apply -f demonstration/apps/data-pipeline/deployment/bytewax.yaml`
+`kubectl apply -f demonstration/data-pipeline/deployment/bytewax.yaml`
 
 
 
