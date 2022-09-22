@@ -1,3 +1,4 @@
 resources:
 - kserve.yaml
 - kserve-runtimes.yaml
+- s3-sa.yaml

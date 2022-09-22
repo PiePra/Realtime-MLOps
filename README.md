@@ -11,7 +11,11 @@ To orchestrate modular ml pipelines tekton is used along with mlflow to store ex
 Inferencing is done by using KServe and Prometheus to allow model serving, model updating and model monitoring. 
 Feast is used as a feature store to orchestrate and serve features at low latency. 
 
-# Platform Setup
+# Setup environment
+install dependencies
+`pip install jupyterlab pandas feast feast[redis] feast[postgres] boto3 pandas tensorflow mlflow sklearn matplotlib`
+
+# Kind Setup
 Installation is provided in the form of kustomization and yaml manifests. The setup is developed and tested on Kubernetes v1.23.
 A kind configuration is provided to enable a local installation. 
 ```bash
@@ -23,16 +27,7 @@ sudo sysctl fs.inotify.max_user_watches=524288
 sudo sysctl fs.inotify.max_user_instances=512
 ```
 
-Generate and create platform manifests on Kubuernetes using kustomize.
-```bash
-kubectl kustomize --enable-helm ./platform | kubectl create -f -
-```
-Wait for all resources to be ready.
-```bash
-watch kubectl get pods -A
-```
-
-# Platform Access
+# Access
 Telepresence provides a convinient way to access internal Kubernetes services externally. Install Telepresence according to the installation docs or by using:
 ```bash
 sudo curl -fL https://app.getambassador.io/download/tel2/linux/amd64/latest/telepresence -o /usr/local/bin/telepresence
@@ -58,3 +53,21 @@ telepresence quit
 telepresence conenct
 ```
 if telepresence resolution is not working propperly
+
+# Install platform
+
+Generate and create platform manifests on Kubuernetes using kustomize.
+
+Start with the feast feature store
+./platform/feast/README.md
+```bash
+kubectl kustomize --enable-helm ./platform/feast | kubectl create -n feast -f -
+```
+Move to streaming system
+./platform/streaming-system/README.md
+
+Move to training
+./platform/training/README.md
+
+head to inference
+./platform/inference/README.md

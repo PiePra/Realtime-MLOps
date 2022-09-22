@@ -3,15 +3,7 @@
 Deploy the Feast Feature Store
 `kubectl kustomize --enable-helm platform/feast/ | kubectl apply -n feast -f -`
 
-# Connect Telepresence
-
-`telepresence helm install`
-`telepresence conenct`
-
 # Populate the offline Store
-Install dependencies 
-`pip install jupyterlab pandas feast feast[redis] feast[postgres]`
-
 Start jupyter lab in a terminal
 `jupyter lab`
 
@@ -22,13 +14,13 @@ Run the "CSV to SQL" to create table at offline store
 
 # Populate feast infrastructure
 
-install feast and dependencies
-
-
 cd to feature_repo
 `cd demonstration/apps/feature_store/feature_repo`
 run feast apply
 `feast apply`
+go back to main directory
+`cd ../../../../`
+
 
 # Check database
 Login to postgres (password: feast)

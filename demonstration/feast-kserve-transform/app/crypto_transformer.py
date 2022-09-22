@@ -14,7 +14,7 @@
 from typing import List, Dict
 import logging
 import kserve
-import http.client
+import requests
 import json
 import numpy as np
 #from tritonclient.grpc import service_pb2 as pb
@@ -74,37 +74,22 @@ class CryptoTransformer(kserve.Model):
         Returns:
             Dict: Returns the entity ids with features
         """
-        request_data = []
-        for i in range(len(features["field_values"])):
-            entity_req = [features["field_values"][i]["fields"][self.feature_refs_key[j]]
-                          for j in range(len(self.feature_refs_key))]
-            for j in range(len(self.entity_ids)):
-                entity_req.append(features["field_values"][i]["fields"][self.entity_ids[j]])
-                request_data.insert(i, entity_req)
-
-        # The default protocol is v1
-        result = {'instances': request_data}
-        if self.protocol == "v2":
-            result = {'inputs': [
-                {
-                    "name": "predict",
-                    "shape": [len(features["field_values"]), len(self.feature_refs_key) + 1],
-                    "datatype": "FP32",
-                    "data": request_data
-                }
-              ]
-            }
-        # if self.protocol == "grpc-v2":
-        #     data = np.array(request_data, dtype=np.float32).flatten()
-        #     tensor_contents = pb.InferTensorContents(fp32_contents=data)
-        #     inputs = pb.ModelInferRequest().InferInputTensor(
-        #             name="predict",
-        #             shape=[len(features["field_values"]), len(self.feature_refs_key) + 1],
-        #             datatype="FP32",
-        #             contents=tensor_contents
-        #     )
-
-        #     result = pb.ModelInferRequest(model_name=self.name, inputs=[inputs])
+        entity_name = "symbol"
+        inputs = []
+        i = 0
+        for line in features['metadata']['feature_names']:
+            if line != entity_name:
+                value = features['results'][i]["values"]
+                entry ={"name": line, "shape": [1], "datatype": "FP64", "data": value}
+                inputs.append(entry)
+            i = i + 1
+            
+        result =  {
+            "parameters": {
+                "content_type": "pd"
+            },
+            "inputs": inputs
+        }
 
         return result
 
@@ -115,19 +100,13 @@ class CryptoTransformer(kserve.Model):
         Returns:
             Dict: Returns the request input after ingesting online features
         """
-        logging.error(inputs)
         headers = {"Content-type": "application/json", "Accept": "application/json"}
-        params = {'features': self.feature_refs, 'entities': self.entity_ids[0],
+        params = {'features': self.feature_refs, 'entities': {"symbol": self.entity_ids},
                   'full_feature_names': True}
         json_params = json.dumps(params)
-        logging.error(f"json_params {json_params}")
-
-        conn = http.client.HTTPConnection(self.feast_serving_url)
-        conn.request("GET", "/get-online-features/", json_params, headers)
-        resp = conn.getresponse()
-        logging.error(f"status {resp.status}")
-        logging.info("The online feature rest request status is %s", resp.status)
-        features = json.loads(resp.read().decode())
+        r = requests.post("http://" + self.feast_serving_url + "/get-online-features/", data=json_params, headers=headers)
+        logging.info("The online feature rest request status is %s", r.status_code)
+        features = r.json()
         logging.error(f"input: {input}")
         logging.error(f"features: {features}")
         outputs = self.buildPredictRequest(inputs, features)

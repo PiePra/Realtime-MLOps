@@ -8,10 +8,7 @@ wait for all resources to be ready
 
 # Train a model to mlflow
 
-install dependencies
-`pip install boto3 pandas tensorflow mlflow sklearn matplotlib`
-
-run the basic_model.ipynb at demonstration/apps/basic-model
+run the basic_model.ipynb at demonstration/apps/basic-model to train a model and push to mlflow
 
 # Check out Model at MLFlow
 
