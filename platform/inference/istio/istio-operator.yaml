@@ -287,11 +287,12 @@ spec:
                                   - UPGRADE
                                   type: string
                                 http1MaxPendingRequests:
+                                  description: Maximum number of pending HTTP requests
+                                    to a destination.
                                   format: int32
                                   type: integer
                                 http2MaxRequests:
-                                  description: Maximum number of active requests to
-                                    a destination.
+                                  description: Maximum number of requests to a backend.
                                   format: int32
                                   type: integer
                                 idleTimeout:
@@ -317,9 +318,6 @@ spec:
                               properties:
                                 connectTimeout:
                                   description: TCP connection timeout.
-                                  type: string
-                                maxConnectionDuration:
-                                  description: The maximum duration of a connection.
                                   type: string
                                 maxConnections:
                                   description: Maximum number of HTTP1 /TCP connections
@@ -472,15 +470,10 @@ spec:
                               type: object
                             simple:
                               enum:
-                              - UNSPECIFIED
+                              - ROUND_ROBIN
                               - LEAST_CONN
                               - RANDOM
                               - PASSTHROUGH
-                              - ROUND_ROBIN
-                              - LEAST_REQUEST
-                              type: string
-                            warmupDurationSecs:
-                              description: Represents the warmup duration of Service.
                               type: string
                           type: object
                         outlierDetection:
@@ -537,11 +530,13 @@ spec:
                                         - UPGRADE
                                         type: string
                                       http1MaxPendingRequests:
+                                        description: Maximum number of pending HTTP
+                                          requests to a destination.
                                         format: int32
                                         type: integer
                                       http2MaxRequests:
-                                        description: Maximum number of active requests
-                                          to a destination.
+                                        description: Maximum number of requests to
+                                          a backend.
                                         format: int32
                                         type: integer
                                       idleTimeout:
@@ -568,9 +563,6 @@ spec:
                                     properties:
                                       connectTimeout:
                                         description: TCP connection timeout.
-                                        type: string
-                                      maxConnectionDuration:
-                                        description: The maximum duration of a connection.
                                         type: string
                                       maxConnections:
                                         description: Maximum number of HTTP1 /TCP
@@ -725,16 +717,10 @@ spec:
                                     type: object
                                   simple:
                                     enum:
-                                    - UNSPECIFIED
+                                    - ROUND_ROBIN
                                     - LEAST_CONN
                                     - RANDOM
                                     - PASSTHROUGH
-                                    - ROUND_ROBIN
-                                    - LEAST_REQUEST
-                                    type: string
-                                  warmupDurationSecs:
-                                    description: Represents the warmup duration of
-                                      Service.
                                     type: string
                                 type: object
                               outlierDetection:
@@ -846,21 +832,6 @@ spec:
                                 type: string
                               type: array
                           type: object
-                        tunnel:
-                          properties:
-                            protocol:
-                              description: Specifies which protocol to use for tunneling
-                                the downstream connection.
-                              type: string
-                            targetHost:
-                              description: Specifies a host to which the downstream
-                                connection is tunneled.
-                              type: string
-                            targetPort:
-                              description: Specifies a port to which the downstream
-                                connection is tunneled.
-                              type: integer
-                          type: object
                       type: object
                   type: object
                 type: array
@@ -880,10 +851,12 @@ spec:
                             - UPGRADE
                             type: string
                           http1MaxPendingRequests:
+                            description: Maximum number of pending HTTP requests to
+                              a destination.
                             format: int32
                             type: integer
                           http2MaxRequests:
-                            description: Maximum number of active requests to a destination.
+                            description: Maximum number of requests to a backend.
                             format: int32
                             type: integer
                           idleTimeout:
@@ -909,9 +882,6 @@ spec:
                         properties:
                           connectTimeout:
                             description: TCP connection timeout.
-                            type: string
-                          maxConnectionDuration:
-                            description: The maximum duration of a connection.
                             type: string
                           maxConnections:
                             description: Maximum number of HTTP1 /TCP connections
@@ -1061,15 +1031,10 @@ spec:
                         type: object
                       simple:
                         enum:
-                        - UNSPECIFIED
+                        - ROUND_ROBIN
                         - LEAST_CONN
                         - RANDOM
                         - PASSTHROUGH
-                        - ROUND_ROBIN
-                        - LEAST_REQUEST
-                        type: string
-                      warmupDurationSecs:
-                        description: Represents the warmup duration of Service.
                         type: string
                     type: object
                   outlierDetection:
@@ -1125,11 +1090,12 @@ spec:
                                   - UPGRADE
                                   type: string
                                 http1MaxPendingRequests:
+                                  description: Maximum number of pending HTTP requests
+                                    to a destination.
                                   format: int32
                                   type: integer
                                 http2MaxRequests:
-                                  description: Maximum number of active requests to
-                                    a destination.
+                                  description: Maximum number of requests to a backend.
                                   format: int32
                                   type: integer
                                 idleTimeout:
@@ -1155,9 +1121,6 @@ spec:
                               properties:
                                 connectTimeout:
                                   description: TCP connection timeout.
-                                  type: string
-                                maxConnectionDuration:
-                                  description: The maximum duration of a connection.
                                   type: string
                                 maxConnections:
                                   description: Maximum number of HTTP1 /TCP connections
@@ -1310,15 +1273,10 @@ spec:
                               type: object
                             simple:
                               enum:
-                              - UNSPECIFIED
+                              - ROUND_ROBIN
                               - LEAST_CONN
                               - RANDOM
                               - PASSTHROUGH
-                              - ROUND_ROBIN
-                              - LEAST_REQUEST
-                              type: string
-                            warmupDurationSecs:
-                              description: Represents the warmup duration of Service.
                               type: string
                           type: object
                         outlierDetection:
@@ -1428,28 +1386,6 @@ spec:
                         items:
                           type: string
                         type: array
-                    type: object
-                  tunnel:
-                    properties:
-                      protocol:
-                        description: Specifies which protocol to use for tunneling
-                          the downstream connection.
-                        type: string
-                      targetHost:
-                        description: Specifies a host to which the downstream connection
-                          is tunneled.
-                        type: string
-                      targetPort:
-                        description: Specifies a port to which the downstream connection
-                          is tunneled.
-                        type: integer
-                    type: object
-                type: object
-              workloadSelector:
-                properties:
-                  matchLabels:
-                    additionalProperties:
-                      type: string
                     type: object
                 type: object
             type: object
@@ -1518,11 +1454,12 @@ spec:
                                   - UPGRADE
                                   type: string
                                 http1MaxPendingRequests:
+                                  description: Maximum number of pending HTTP requests
+                                    to a destination.
                                   format: int32
                                   type: integer
                                 http2MaxRequests:
-                                  description: Maximum number of active requests to
-                                    a destination.
+                                  description: Maximum number of requests to a backend.
                                   format: int32
                                   type: integer
                                 idleTimeout:
@@ -1548,9 +1485,6 @@ spec:
                               properties:
                                 connectTimeout:
                                   description: TCP connection timeout.
-                                  type: string
-                                maxConnectionDuration:
-                                  description: The maximum duration of a connection.
                                   type: string
                                 maxConnections:
                                   description: Maximum number of HTTP1 /TCP connections
@@ -1703,15 +1637,10 @@ spec:
                               type: object
                             simple:
                               enum:
-                              - UNSPECIFIED
+                              - ROUND_ROBIN
                               - LEAST_CONN
                               - RANDOM
                               - PASSTHROUGH
-                              - ROUND_ROBIN
-                              - LEAST_REQUEST
-                              type: string
-                            warmupDurationSecs:
-                              description: Represents the warmup duration of Service.
                               type: string
                           type: object
                         outlierDetection:
@@ -1768,11 +1697,13 @@ spec:
                                         - UPGRADE
                                         type: string
                                       http1MaxPendingRequests:
+                                        description: Maximum number of pending HTTP
+                                          requests to a destination.
                                         format: int32
                                         type: integer
                                       http2MaxRequests:
-                                        description: Maximum number of active requests
-                                          to a destination.
+                                        description: Maximum number of requests to
+                                          a backend.
                                         format: int32
                                         type: integer
                                       idleTimeout:
@@ -1799,9 +1730,6 @@ spec:
                                     properties:
                                       connectTimeout:
                                         description: TCP connection timeout.
-                                        type: string
-                                      maxConnectionDuration:
-                                        description: The maximum duration of a connection.
                                         type: string
                                       maxConnections:
                                         description: Maximum number of HTTP1 /TCP
@@ -1956,16 +1884,10 @@ spec:
                                     type: object
                                   simple:
                                     enum:
-                                    - UNSPECIFIED
+                                    - ROUND_ROBIN
                                     - LEAST_CONN
                                     - RANDOM
                                     - PASSTHROUGH
-                                    - ROUND_ROBIN
-                                    - LEAST_REQUEST
-                                    type: string
-                                  warmupDurationSecs:
-                                    description: Represents the warmup duration of
-                                      Service.
                                     type: string
                                 type: object
                               outlierDetection:
@@ -2077,21 +1999,6 @@ spec:
                                 type: string
                               type: array
                           type: object
-                        tunnel:
-                          properties:
-                            protocol:
-                              description: Specifies which protocol to use for tunneling
-                                the downstream connection.
-                              type: string
-                            targetHost:
-                              description: Specifies a host to which the downstream
-                                connection is tunneled.
-                              type: string
-                            targetPort:
-                              description: Specifies a port to which the downstream
-                                connection is tunneled.
-                              type: integer
-                          type: object
                       type: object
                   type: object
                 type: array
@@ -2111,10 +2018,12 @@ spec:
                             - UPGRADE
                             type: string
                           http1MaxPendingRequests:
+                            description: Maximum number of pending HTTP requests to
+                              a destination.
                             format: int32
                             type: integer
                           http2MaxRequests:
-                            description: Maximum number of active requests to a destination.
+                            description: Maximum number of requests to a backend.
                             format: int32
                             type: integer
                           idleTimeout:
@@ -2140,9 +2049,6 @@ spec:
                         properties:
                           connectTimeout:
                             description: TCP connection timeout.
-                            type: string
-                          maxConnectionDuration:
-                            description: The maximum duration of a connection.
                             type: string
                           maxConnections:
                             description: Maximum number of HTTP1 /TCP connections
@@ -2292,15 +2198,10 @@ spec:
                         type: object
                       simple:
                         enum:
-                        - UNSPECIFIED
+                        - ROUND_ROBIN
                         - LEAST_CONN
                         - RANDOM
                         - PASSTHROUGH
-                        - ROUND_ROBIN
-                        - LEAST_REQUEST
-                        type: string
-                      warmupDurationSecs:
-                        description: Represents the warmup duration of Service.
                         type: string
                     type: object
                   outlierDetection:
@@ -2356,11 +2257,12 @@ spec:
                                   - UPGRADE
                                   type: string
                                 http1MaxPendingRequests:
+                                  description: Maximum number of pending HTTP requests
+                                    to a destination.
                                   format: int32
                                   type: integer
                                 http2MaxRequests:
-                                  description: Maximum number of active requests to
-                                    a destination.
+                                  description: Maximum number of requests to a backend.
                                   format: int32
                                   type: integer
                                 idleTimeout:
@@ -2386,9 +2288,6 @@ spec:
                               properties:
                                 connectTimeout:
                                   description: TCP connection timeout.
-                                  type: string
-                                maxConnectionDuration:
-                                  description: The maximum duration of a connection.
                                   type: string
                                 maxConnections:
                                   description: Maximum number of HTTP1 /TCP connections
@@ -2541,15 +2440,10 @@ spec:
                               type: object
                             simple:
                               enum:
-                              - UNSPECIFIED
+                              - ROUND_ROBIN
                               - LEAST_CONN
                               - RANDOM
                               - PASSTHROUGH
-                              - ROUND_ROBIN
-                              - LEAST_REQUEST
-                              type: string
-                            warmupDurationSecs:
-                              description: Represents the warmup duration of Service.
                               type: string
                           type: object
                         outlierDetection:
@@ -2659,28 +2553,6 @@ spec:
                         items:
                           type: string
                         type: array
-                    type: object
-                  tunnel:
-                    properties:
-                      protocol:
-                        description: Specifies which protocol to use for tunneling
-                          the downstream connection.
-                        type: string
-                      targetHost:
-                        description: Specifies a host to which the downstream connection
-                          is tunneled.
-                        type: string
-                      targetPort:
-                        description: Specifies a port to which the downstream connection
-                          is tunneled.
-                        type: integer
-                    type: object
-                type: object
-              workloadSelector:
-                properties:
-                  matchLabels:
-                    additionalProperties:
-                      type: string
                     type: object
                 type: object
             type: object
@@ -3832,8 +3704,7 @@ spec:
                 items:
                   properties:
                     bind:
-                      description: The IP(IPv4 or IPv6) to which the listener should
-                        be bound.
+                      description: The IP to which the listener should be bound.
                       type: string
                     captureMode:
                       enum:
@@ -4005,8 +3876,7 @@ spec:
                 items:
                   properties:
                     bind:
-                      description: The IP(IPv4 or IPv6) to which the listener should
-                        be bound.
+                      description: The IP to which the listener should be bound.
                       type: string
                     captureMode:
                       enum:
@@ -4194,17 +4064,6 @@ spec:
                             should be logged.
                           type: string
                       type: object
-                    match:
-                      description: Allows tailoring of logging behavior to specific
-                        conditions.
-                      properties:
-                        mode:
-                          enum:
-                          - CLIENT_AND_SERVER
-                          - CLIENT
-                          - SERVER
-                          type: string
-                      type: object
                     providers:
                       description: Optional.
                       items:
@@ -4262,6 +4121,8 @@ spec:
                                 - GRPC_RESPONSE_MESSAGES
                                 type: string
                               mode:
+                                description: 'Controls which mode of metrics generation
+                                  is selected: CLIENT and/or SERVER.'
                                 enum:
                                 - CLIENT_AND_SERVER
                                 - CLIENT
@@ -4341,6 +4202,8 @@ spec:
                                 type: string
                             type: object
                           header:
+                            description: RequestHeader adds the value of an header
+                              from the request to each span.
                             properties:
                               defaultValue:
                                 description: Optional.
@@ -4365,16 +4228,6 @@ spec:
                       description: Controls span reporting.
                       nullable: true
                       type: boolean
-                    match:
-                      description: Allows tailoring of behavior to specific conditions.
-                      properties:
-                        mode:
-                          enum:
-                          - CLIENT_AND_SERVER
-                          - CLIENT
-                          - SERVER
-                          type: string
-                      type: object
                     providers:
                       description: Optional.
                       items:
@@ -4540,35 +4393,6 @@ spec:
                             delegate VirtualService resides.
                           type: string
                       type: object
-                    directResponse:
-                      description: A HTTP rule can either return a direct_response,
-                        redirect or forward (default) traffic.
-                      properties:
-                        body:
-                          description: Specifies the content of the response body.
-                          oneOf:
-                          - not:
-                              anyOf:
-                              - required:
-                                - string
-                              - required:
-                                - bytes
-                          - required:
-                            - string
-                          - required:
-                            - bytes
-                          properties:
-                            bytes:
-                              description: response body as base64 encoded bytes.
-                              format: binary
-                              type: string
-                            string:
-                              type: string
-                          type: object
-                        status:
-                          description: Specifies the HTTP response status to be returned.
-                          type: integer
-                      type: object
                     fault:
                       description: Fault injection policy to apply on HTTP traffic
                         at the client side.
@@ -4591,7 +4415,6 @@ spec:
                             - http2Error
                           properties:
                             grpcStatus:
-                              description: GRPC status code to use to abort the request.
                               type: string
                             http2Error:
                               type: string
@@ -4834,10 +4657,6 @@ spec:
                             description: Source namespace constraining the applicability
                               of a rule to workloads in that namespace.
                             type: string
-                          statPrefix:
-                            description: The human readable prefix to use when emitting
-                              statistics for this route.
-                            type: string
                           uri:
                             oneOf:
                             - not:
@@ -4932,8 +4751,8 @@ spec:
                       description: The name assigned to the route for debugging purposes.
                       type: string
                     redirect:
-                      description: A HTTP rule can either return a direct_response,
-                        redirect or forward (default) traffic.
+                      description: A HTTP rule can either redirect or forward (default)
+                        traffic.
                       oneOf:
                       - not:
                           anyOf:
@@ -4999,8 +4818,8 @@ spec:
                           type: string
                       type: object
                     route:
-                      description: A HTTP rule can either return a direct_response,
-                        redirect or forward (default) traffic.
+                      description: A HTTP rule can either redirect or forward (default)
+                        traffic.
                       items:
                         properties:
                           destination:
@@ -5323,35 +5142,6 @@ spec:
                             delegate VirtualService resides.
                           type: string
                       type: object
-                    directResponse:
-                      description: A HTTP rule can either return a direct_response,
-                        redirect or forward (default) traffic.
-                      properties:
-                        body:
-                          description: Specifies the content of the response body.
-                          oneOf:
-                          - not:
-                              anyOf:
-                              - required:
-                                - string
-                              - required:
-                                - bytes
-                          - required:
-                            - string
-                          - required:
-                            - bytes
-                          properties:
-                            bytes:
-                              description: response body as base64 encoded bytes.
-                              format: binary
-                              type: string
-                            string:
-                              type: string
-                          type: object
-                        status:
-                          description: Specifies the HTTP response status to be returned.
-                          type: integer
-                      type: object
                     fault:
                       description: Fault injection policy to apply on HTTP traffic
                         at the client side.
@@ -5374,7 +5164,6 @@ spec:
                             - http2Error
                           properties:
                             grpcStatus:
-                              description: GRPC status code to use to abort the request.
                               type: string
                             http2Error:
                               type: string
@@ -5617,10 +5406,6 @@ spec:
                             description: Source namespace constraining the applicability
                               of a rule to workloads in that namespace.
                             type: string
-                          statPrefix:
-                            description: The human readable prefix to use when emitting
-                              statistics for this route.
-                            type: string
                           uri:
                             oneOf:
                             - not:
@@ -5715,8 +5500,8 @@ spec:
                       description: The name assigned to the route for debugging purposes.
                       type: string
                     redirect:
-                      description: A HTTP rule can either return a direct_response,
-                        redirect or forward (default) traffic.
+                      description: A HTTP rule can either redirect or forward (default)
+                        traffic.
                       oneOf:
                       - not:
                           anyOf:
@@ -5782,8 +5567,8 @@ spec:
                           type: string
                       type: object
                     route:
-                      description: A HTTP rule can either return a direct_response,
-                        redirect or forward (default) traffic.
+                      description: A HTTP rule can either redirect or forward (default)
+                        traffic.
                       items:
                         properties:
                           destination:
@@ -6035,6 +5820,8 @@ spec:
               WebAssembly filters. See more details at: https://istio.io/docs/reference/config/proxy_extensions/wasm-plugin.html'
             properties:
               imagePullPolicy:
+                description: The pull behaviour to be applied when fetching an OCI
+                  image.
                 enum:
                 - UNSPECIFIED_POLICY
                 - IfNotPresent
@@ -6078,27 +5865,6 @@ spec:
                 type: string
               verificationKey:
                 type: string
-              vmConfig:
-                description: Configuration for a Wasm VM.
-                properties:
-                  env:
-                    description: Specifies environment variables to be injected to
-                      this VM.
-                    items:
-                      properties:
-                        name:
-                          type: string
-                        value:
-                          description: Value for the environment variable.
-                          type: string
-                        valueFrom:
-                          enum:
-                          - INLINE
-                          - HOST
-                          type: string
-                      type: object
-                    type: array
-                type: object
             type: object
           status:
             type: object
@@ -6792,9 +6558,6 @@ rules:
   - apiGroups: ["networking.x-k8s.io", "gateway.networking.k8s.io"]
     resources: ["*"] # TODO: should be on just */status but wildcard is not supported
     verbs: ["update", "patch"]
-  - apiGroups: ["gateway.networking.k8s.io"]
-    resources: ["gatewayclasses"]
-    verbs: ["create", "update", "patch", "delete"]
 
   # Needed for multicluster secret reading, possibly ingress certs in the future
   - apiGroups: [""]
@@ -6914,9 +6677,6 @@ rules:
   - apiGroups: ["networking.x-k8s.io", "gateway.networking.k8s.io"]
     resources: ["*"] # TODO: should be on just */status but wildcard is not supported
     verbs: ["update"]
-  - apiGroups: ["gateway.networking.k8s.io"]
-    resources: ["gatewayclasses"]
-    verbs: ["create", "update", "patch", "delete"]
 
   # Needed for multicluster secret reading, possibly ingress certs in the future
   - apiGroups: [""]
@@ -7032,6 +6792,7 @@ webhooks:
         name: istiod
         namespace: istio-system
         path: "/validate"
+      caBundle: "" # patched at runtime when the webhook is ready.
     rules:
       - operations:
           - CREATE
@@ -7061,12 +6822,255 @@ webhooks:
 apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
+  name: stats-filter-1.11
+  namespace: istio-system
+  labels:
+    istio.io/rev: default
+spec:
+  configPatches:
+    - applyTo: HTTP_FILTER
+      match:
+        context: SIDECAR_OUTBOUND
+        proxy:
+          proxyVersion: '^1\.11.*'
+        listener:
+          filterChain:
+            filter:
+              name: "envoy.filters.network.http_connection_manager"
+              subFilter:
+                name: "envoy.filters.http.router"
+      patch:
+        operation: INSERT_BEFORE
+        value:
+          name: istio.stats
+          typed_config:
+            "@type": type.googleapis.com/udpa.type.v1.TypedStruct
+            type_url: type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm
+            value:
+              config:
+                root_id: stats_outbound
+                configuration:
+                  "@type": "type.googleapis.com/google.protobuf.StringValue"
+                  value: |
+                    {
+                      "debug": "false",
+                      "stat_prefix": "istio"
+                    }
+                vm_config:
+                  vm_id: stats_outbound
+                  runtime: envoy.wasm.runtime.null
+                  code:
+                    local:
+                      inline_string: envoy.wasm.stats
+    - applyTo: HTTP_FILTER
+      match:
+        context: SIDECAR_INBOUND
+        proxy:
+          proxyVersion: '^1\.11.*'
+        listener:
+          filterChain:
+            filter:
+              name: "envoy.filters.network.http_connection_manager"
+              subFilter:
+                name: "envoy.filters.http.router"
+      patch:
+        operation: INSERT_BEFORE
+        value:
+          name: istio.stats
+          typed_config:
+            "@type": type.googleapis.com/udpa.type.v1.TypedStruct
+            type_url: type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm
+            value:
+              config:
+                root_id: stats_inbound
+                configuration:
+                  "@type": "type.googleapis.com/google.protobuf.StringValue"
+                  value: |
+                    {
+                      "debug": "false",
+                      "stat_prefix": "istio",
+                      "disable_host_header_fallback": true,
+                      "metrics": [
+                        {
+                          "dimensions": {
+                            "destination_cluster": "node.metadata['CLUSTER_ID']",
+                            "source_cluster": "downstream_peer.cluster_id"
+                          }
+                        }
+                      ]
+                    }
+                vm_config:
+                  vm_id: stats_inbound
+                  runtime: envoy.wasm.runtime.null
+                  code:
+                    local:
+                      inline_string: envoy.wasm.stats
+    - applyTo: HTTP_FILTER
+      match:
+        context: GATEWAY
+        proxy:
+          proxyVersion: '^1\.11.*'
+        listener:
+          filterChain:
+            filter:
+              name: "envoy.filters.network.http_connection_manager"
+              subFilter:
+                name: "envoy.filters.http.router"
+      patch:
+        operation: INSERT_BEFORE
+        value:
+          name: istio.stats
+          typed_config:
+            "@type": type.googleapis.com/udpa.type.v1.TypedStruct
+            type_url: type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm
+            value:
+              config:
+                root_id: stats_outbound
+                configuration:
+                  "@type": "type.googleapis.com/google.protobuf.StringValue"
+                  value: |
+                    {
+                      "debug": "false",
+                      "stat_prefix": "istio",
+                      "disable_host_header_fallback": true
+                    }
+                vm_config:
+                  vm_id: stats_outbound
+                  runtime: envoy.wasm.runtime.null
+                  code:
+                    local:
+                      inline_string: envoy.wasm.stats
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: stats-filter-1.12
+  namespace: istio-system
+  labels:
+    istio.io/rev: default
+spec:
+  configPatches:
+    - applyTo: HTTP_FILTER
+      match:
+        context: SIDECAR_OUTBOUND
+        proxy:
+          proxyVersion: '^1\.12.*'
+        listener:
+          filterChain:
+            filter:
+              name: "envoy.filters.network.http_connection_manager"
+              subFilter:
+                name: "envoy.filters.http.router"
+      patch:
+        operation: INSERT_BEFORE
+        value:
+          name: istio.stats
+          typed_config:
+            "@type": type.googleapis.com/udpa.type.v1.TypedStruct
+            type_url: type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm
+            value:
+              config:
+                root_id: stats_outbound
+                configuration:
+                  "@type": "type.googleapis.com/google.protobuf.StringValue"
+                  value: |
+                    {
+                      "debug": "false",
+                      "stat_prefix": "istio"
+                    }
+                vm_config:
+                  vm_id: stats_outbound
+                  runtime: envoy.wasm.runtime.null
+                  code:
+                    local:
+                      inline_string: envoy.wasm.stats
+    - applyTo: HTTP_FILTER
+      match:
+        context: SIDECAR_INBOUND
+        proxy:
+          proxyVersion: '^1\.12.*'
+        listener:
+          filterChain:
+            filter:
+              name: "envoy.filters.network.http_connection_manager"
+              subFilter:
+                name: "envoy.filters.http.router"
+      patch:
+        operation: INSERT_BEFORE
+        value:
+          name: istio.stats
+          typed_config:
+            "@type": type.googleapis.com/udpa.type.v1.TypedStruct
+            type_url: type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm
+            value:
+              config:
+                root_id: stats_inbound
+                configuration:
+                  "@type": "type.googleapis.com/google.protobuf.StringValue"
+                  value: |
+                    {
+                      "debug": "false",
+                      "stat_prefix": "istio",
+                      "disable_host_header_fallback": true,
+                      "metrics": [
+                        {
+                          "dimensions": {
+                            "destination_cluster": "node.metadata['CLUSTER_ID']",
+                            "source_cluster": "downstream_peer.cluster_id"
+                          }
+                        }
+                      ]
+                    }
+                vm_config:
+                  vm_id: stats_inbound
+                  runtime: envoy.wasm.runtime.null
+                  code:
+                    local:
+                      inline_string: envoy.wasm.stats
+    - applyTo: HTTP_FILTER
+      match:
+        context: GATEWAY
+        proxy:
+          proxyVersion: '^1\.12.*'
+        listener:
+          filterChain:
+            filter:
+              name: "envoy.filters.network.http_connection_manager"
+              subFilter:
+                name: "envoy.filters.http.router"
+      patch:
+        operation: INSERT_BEFORE
+        value:
+          name: istio.stats
+          typed_config:
+            "@type": type.googleapis.com/udpa.type.v1.TypedStruct
+            type_url: type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm
+            value:
+              config:
+                root_id: stats_outbound
+                configuration:
+                  "@type": "type.googleapis.com/google.protobuf.StringValue"
+                  value: |
+                    {
+                      "debug": "false",
+                      "stat_prefix": "istio",
+                      "disable_host_header_fallback": true
+                    }
+                vm_config:
+                  vm_id: stats_outbound
+                  runtime: envoy.wasm.runtime.null
+                  code:
+                    local:
+                      inline_string: envoy.wasm.stats
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
   name: stats-filter-1.13
   namespace: istio-system
   labels:
     istio.io/rev: default
 spec:
-  priority: -1
   configPatches:
     - applyTo: HTTP_FILTER
       match:
@@ -7129,7 +7133,15 @@ spec:
                     {
                       "debug": "false",
                       "stat_prefix": "istio",
-                      "disable_host_header_fallback": true
+                      "disable_host_header_fallback": true,
+                      "metrics": [
+                        {
+                          "dimensions": {
+                            "destination_cluster": "node.metadata['CLUSTER_ID']",
+                            "source_cluster": "downstream_peer.cluster_id"
+                          }
+                        }
+                      ]
                     }
                 vm_config:
                   vm_id: stats_inbound
@@ -7176,31 +7188,68 @@ spec:
 apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
-  name: stats-filter-1.14
+  name: tcp-stats-filter-1.11
   namespace: istio-system
   labels:
     istio.io/rev: default
 spec:
-  priority: -1
   configPatches:
-    - applyTo: HTTP_FILTER
+    - applyTo: NETWORK_FILTER
       match:
-        context: SIDECAR_OUTBOUND
+        context: SIDECAR_INBOUND
         proxy:
-          proxyVersion: '^1\.14.*'
+          proxyVersion: '^1\.11.*'
         listener:
           filterChain:
             filter:
-              name: "envoy.filters.network.http_connection_manager"
-              subFilter:
-                name: "envoy.filters.http.router"
+              name: "envoy.filters.network.tcp_proxy"
       patch:
         operation: INSERT_BEFORE
         value:
           name: istio.stats
           typed_config:
             "@type": type.googleapis.com/udpa.type.v1.TypedStruct
-            type_url: type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm
+            type_url: type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm
+            value:
+              config:
+                root_id: stats_inbound
+                configuration:
+                  "@type": "type.googleapis.com/google.protobuf.StringValue"
+                  value: |
+                    {
+                      "debug": "false",
+                      "stat_prefix": "istio",
+                      "metrics": [
+                        {
+                          "dimensions": {
+                            "destination_cluster": "node.metadata['CLUSTER_ID']",
+                            "source_cluster": "downstream_peer.cluster_id"
+                          }
+                        }
+                      ]
+                    }
+                vm_config:
+                  vm_id: tcp_stats_inbound
+                  runtime: envoy.wasm.runtime.null
+                  code:
+                    local:
+                      inline_string: "envoy.wasm.stats"
+    - applyTo: NETWORK_FILTER
+      match:
+        context: SIDECAR_OUTBOUND
+        proxy:
+          proxyVersion: '^1\.11.*'
+        listener:
+          filterChain:
+            filter:
+              name: "envoy.filters.network.tcp_proxy"
+      patch:
+        operation: INSERT_BEFORE
+        value:
+          name: istio.stats
+          typed_config:
+            "@type": type.googleapis.com/udpa.type.v1.TypedStruct
+            type_url: type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm
             value:
               config:
                 root_id: stats_outbound
@@ -7212,64 +7261,27 @@ spec:
                       "stat_prefix": "istio"
                     }
                 vm_config:
-                  vm_id: stats_outbound
+                  vm_id: tcp_stats_outbound
                   runtime: envoy.wasm.runtime.null
                   code:
                     local:
-                      inline_string: envoy.wasm.stats
-    - applyTo: HTTP_FILTER
-      match:
-        context: SIDECAR_INBOUND
-        proxy:
-          proxyVersion: '^1\.14.*'
-        listener:
-          filterChain:
-            filter:
-              name: "envoy.filters.network.http_connection_manager"
-              subFilter:
-                name: "envoy.filters.http.router"
-      patch:
-        operation: INSERT_BEFORE
-        value:
-          name: istio.stats
-          typed_config:
-            "@type": type.googleapis.com/udpa.type.v1.TypedStruct
-            type_url: type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm
-            value:
-              config:
-                root_id: stats_inbound
-                configuration:
-                  "@type": "type.googleapis.com/google.protobuf.StringValue"
-                  value: |
-                    {
-                      "debug": "false",
-                      "stat_prefix": "istio",
-                      "disable_host_header_fallback": true
-                    }
-                vm_config:
-                  vm_id: stats_inbound
-                  runtime: envoy.wasm.runtime.null
-                  code:
-                    local:
-                      inline_string: envoy.wasm.stats
-    - applyTo: HTTP_FILTER
+                      inline_string: "envoy.wasm.stats"
+    - applyTo: NETWORK_FILTER
       match:
         context: GATEWAY
         proxy:
-          proxyVersion: '^1\.14.*'
+          proxyVersion: '^1\.11.*'
         listener:
           filterChain:
             filter:
-              name: "envoy.filters.network.http_connection_manager"
-              subFilter:
-                name: "envoy.filters.http.router"
+              name: "envoy.filters.network.tcp_proxy"
       patch:
         operation: INSERT_BEFORE
         value:
           name: istio.stats
           typed_config:
             "@type": type.googleapis.com/udpa.type.v1.TypedStruct
-            type_url: type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm
+            type_url: type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm
             value:
               config:
                 root_id: stats_outbound
@@ -7278,44 +7290,80 @@ spec:
                   value: |
                     {
                       "debug": "false",
-                      "stat_prefix": "istio",
-                      "disable_host_header_fallback": true
+                      "stat_prefix": "istio"
                     }
                 vm_config:
-                  vm_id: stats_outbound
+                  vm_id: tcp_stats_outbound
                   runtime: envoy.wasm.runtime.null
                   code:
                     local:
-                      inline_string: envoy.wasm.stats
+                      inline_string: "envoy.wasm.stats"
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
-  name: stats-filter-1.15
+  name: tcp-stats-filter-1.12
   namespace: istio-system
   labels:
     istio.io/rev: default
 spec:
-  priority: -1
   configPatches:
-    - applyTo: HTTP_FILTER
+    - applyTo: NETWORK_FILTER
       match:
-        context: SIDECAR_OUTBOUND
+        context: SIDECAR_INBOUND
         proxy:
-          proxyVersion: '^1\.15.*'
+          proxyVersion: '^1\.12.*'
         listener:
           filterChain:
             filter:
-              name: "envoy.filters.network.http_connection_manager"
-              subFilter:
-                name: "envoy.filters.http.router"
+              name: "envoy.filters.network.tcp_proxy"
       patch:
         operation: INSERT_BEFORE
         value:
           name: istio.stats
           typed_config:
             "@type": type.googleapis.com/udpa.type.v1.TypedStruct
-            type_url: type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm
+            type_url: type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm
+            value:
+              config:
+                root_id: stats_inbound
+                configuration:
+                  "@type": "type.googleapis.com/google.protobuf.StringValue"
+                  value: |
+                    {
+                      "debug": "false",
+                      "stat_prefix": "istio",
+                      "metrics": [
+                        {
+                          "dimensions": {
+                            "destination_cluster": "node.metadata['CLUSTER_ID']",
+                            "source_cluster": "downstream_peer.cluster_id"
+                          }
+                        }
+                      ]
+                    }
+                vm_config:
+                  vm_id: tcp_stats_inbound
+                  runtime: envoy.wasm.runtime.null
+                  code:
+                    local:
+                      inline_string: "envoy.wasm.stats"
+    - applyTo: NETWORK_FILTER
+      match:
+        context: SIDECAR_OUTBOUND
+        proxy:
+          proxyVersion: '^1\.12.*'
+        listener:
+          filterChain:
+            filter:
+              name: "envoy.filters.network.tcp_proxy"
+      patch:
+        operation: INSERT_BEFORE
+        value:
+          name: istio.stats
+          typed_config:
+            "@type": type.googleapis.com/udpa.type.v1.TypedStruct
+            type_url: type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm
             value:
               config:
                 root_id: stats_outbound
@@ -7327,64 +7375,27 @@ spec:
                       "stat_prefix": "istio"
                     }
                 vm_config:
-                  vm_id: stats_outbound
+                  vm_id: tcp_stats_outbound
                   runtime: envoy.wasm.runtime.null
                   code:
                     local:
-                      inline_string: envoy.wasm.stats
-    - applyTo: HTTP_FILTER
-      match:
-        context: SIDECAR_INBOUND
-        proxy:
-          proxyVersion: '^1\.15.*'
-        listener:
-          filterChain:
-            filter:
-              name: "envoy.filters.network.http_connection_manager"
-              subFilter:
-                name: "envoy.filters.http.router"
-      patch:
-        operation: INSERT_BEFORE
-        value:
-          name: istio.stats
-          typed_config:
-            "@type": type.googleapis.com/udpa.type.v1.TypedStruct
-            type_url: type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm
-            value:
-              config:
-                root_id: stats_inbound
-                configuration:
-                  "@type": "type.googleapis.com/google.protobuf.StringValue"
-                  value: |
-                    {
-                      "debug": "false",
-                      "stat_prefix": "istio",
-                      "disable_host_header_fallback": true
-                    }
-                vm_config:
-                  vm_id: stats_inbound
-                  runtime: envoy.wasm.runtime.null
-                  code:
-                    local:
-                      inline_string: envoy.wasm.stats
-    - applyTo: HTTP_FILTER
+                      inline_string: "envoy.wasm.stats"
+    - applyTo: NETWORK_FILTER
       match:
         context: GATEWAY
         proxy:
-          proxyVersion: '^1\.15.*'
+          proxyVersion: '^1\.12.*'
         listener:
           filterChain:
             filter:
-              name: "envoy.filters.network.http_connection_manager"
-              subFilter:
-                name: "envoy.filters.http.router"
+              name: "envoy.filters.network.tcp_proxy"
       patch:
         operation: INSERT_BEFORE
         value:
           name: istio.stats
           typed_config:
             "@type": type.googleapis.com/udpa.type.v1.TypedStruct
-            type_url: type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm
+            type_url: type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm
             value:
               config:
                 root_id: stats_outbound
@@ -7393,15 +7404,14 @@ spec:
                   value: |
                     {
                       "debug": "false",
-                      "stat_prefix": "istio",
-                      "disable_host_header_fallback": true
+                      "stat_prefix": "istio"
                     }
                 vm_config:
-                  vm_id: stats_outbound
+                  vm_id: tcp_stats_outbound
                   runtime: envoy.wasm.runtime.null
                   code:
                     local:
-                      inline_string: envoy.wasm.stats
+                      inline_string: "envoy.wasm.stats"
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
@@ -7411,7 +7421,6 @@ metadata:
   labels:
     istio.io/rev: default
 spec:
-  priority: -1
   configPatches:
     - applyTo: NETWORK_FILTER
       match:
@@ -7437,7 +7446,15 @@ spec:
                   value: |
                     {
                       "debug": "false",
-                      "stat_prefix": "istio"
+                      "stat_prefix": "istio",
+                      "metrics": [
+                        {
+                          "dimensions": {
+                            "destination_cluster": "node.metadata['CLUSTER_ID']",
+                            "source_cluster": "downstream_peer.cluster_id"
+                          }
+                        }
+                      ]
                     }
                 vm_config:
                   vm_id: tcp_stats_inbound
@@ -7482,220 +7499,6 @@ spec:
         context: GATEWAY
         proxy:
           proxyVersion: '^1\.13.*'
-        listener:
-          filterChain:
-            filter:
-              name: "envoy.filters.network.tcp_proxy"
-      patch:
-        operation: INSERT_BEFORE
-        value:
-          name: istio.stats
-          typed_config:
-            "@type": type.googleapis.com/udpa.type.v1.TypedStruct
-            type_url: type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm
-            value:
-              config:
-                root_id: stats_outbound
-                configuration:
-                  "@type": "type.googleapis.com/google.protobuf.StringValue"
-                  value: |
-                    {
-                      "debug": "false",
-                      "stat_prefix": "istio"
-                    }
-                vm_config:
-                  vm_id: tcp_stats_outbound
-                  runtime: envoy.wasm.runtime.null
-                  code:
-                    local:
-                      inline_string: "envoy.wasm.stats"
----
-apiVersion: networking.istio.io/v1alpha3
-kind: EnvoyFilter
-metadata:
-  name: tcp-stats-filter-1.14
-  namespace: istio-system
-  labels:
-    istio.io/rev: default
-spec:
-  priority: -1
-  configPatches:
-    - applyTo: NETWORK_FILTER
-      match:
-        context: SIDECAR_INBOUND
-        proxy:
-          proxyVersion: '^1\.14.*'
-        listener:
-          filterChain:
-            filter:
-              name: "envoy.filters.network.tcp_proxy"
-      patch:
-        operation: INSERT_BEFORE
-        value:
-          name: istio.stats
-          typed_config:
-            "@type": type.googleapis.com/udpa.type.v1.TypedStruct
-            type_url: type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm
-            value:
-              config:
-                root_id: stats_inbound
-                configuration:
-                  "@type": "type.googleapis.com/google.protobuf.StringValue"
-                  value: |
-                    {
-                      "debug": "false",
-                      "stat_prefix": "istio"
-                    }
-                vm_config:
-                  vm_id: tcp_stats_inbound
-                  runtime: envoy.wasm.runtime.null
-                  code:
-                    local:
-                      inline_string: "envoy.wasm.stats"
-    - applyTo: NETWORK_FILTER
-      match:
-        context: SIDECAR_OUTBOUND
-        proxy:
-          proxyVersion: '^1\.14.*'
-        listener:
-          filterChain:
-            filter:
-              name: "envoy.filters.network.tcp_proxy"
-      patch:
-        operation: INSERT_BEFORE
-        value:
-          name: istio.stats
-          typed_config:
-            "@type": type.googleapis.com/udpa.type.v1.TypedStruct
-            type_url: type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm
-            value:
-              config:
-                root_id: stats_outbound
-                configuration:
-                  "@type": "type.googleapis.com/google.protobuf.StringValue"
-                  value: |
-                    {
-                      "debug": "false",
-                      "stat_prefix": "istio"
-                    }
-                vm_config:
-                  vm_id: tcp_stats_outbound
-                  runtime: envoy.wasm.runtime.null
-                  code:
-                    local:
-                      inline_string: "envoy.wasm.stats"
-    - applyTo: NETWORK_FILTER
-      match:
-        context: GATEWAY
-        proxy:
-          proxyVersion: '^1\.14.*'
-        listener:
-          filterChain:
-            filter:
-              name: "envoy.filters.network.tcp_proxy"
-      patch:
-        operation: INSERT_BEFORE
-        value:
-          name: istio.stats
-          typed_config:
-            "@type": type.googleapis.com/udpa.type.v1.TypedStruct
-            type_url: type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm
-            value:
-              config:
-                root_id: stats_outbound
-                configuration:
-                  "@type": "type.googleapis.com/google.protobuf.StringValue"
-                  value: |
-                    {
-                      "debug": "false",
-                      "stat_prefix": "istio"
-                    }
-                vm_config:
-                  vm_id: tcp_stats_outbound
-                  runtime: envoy.wasm.runtime.null
-                  code:
-                    local:
-                      inline_string: "envoy.wasm.stats"
----
-apiVersion: networking.istio.io/v1alpha3
-kind: EnvoyFilter
-metadata:
-  name: tcp-stats-filter-1.15
-  namespace: istio-system
-  labels:
-    istio.io/rev: default
-spec:
-  priority: -1
-  configPatches:
-    - applyTo: NETWORK_FILTER
-      match:
-        context: SIDECAR_INBOUND
-        proxy:
-          proxyVersion: '^1\.15.*'
-        listener:
-          filterChain:
-            filter:
-              name: "envoy.filters.network.tcp_proxy"
-      patch:
-        operation: INSERT_BEFORE
-        value:
-          name: istio.stats
-          typed_config:
-            "@type": type.googleapis.com/udpa.type.v1.TypedStruct
-            type_url: type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm
-            value:
-              config:
-                root_id: stats_inbound
-                configuration:
-                  "@type": "type.googleapis.com/google.protobuf.StringValue"
-                  value: |
-                    {
-                      "debug": "false",
-                      "stat_prefix": "istio"
-                    }
-                vm_config:
-                  vm_id: tcp_stats_inbound
-                  runtime: envoy.wasm.runtime.null
-                  code:
-                    local:
-                      inline_string: "envoy.wasm.stats"
-    - applyTo: NETWORK_FILTER
-      match:
-        context: SIDECAR_OUTBOUND
-        proxy:
-          proxyVersion: '^1\.15.*'
-        listener:
-          filterChain:
-            filter:
-              name: "envoy.filters.network.tcp_proxy"
-      patch:
-        operation: INSERT_BEFORE
-        value:
-          name: istio.stats
-          typed_config:
-            "@type": type.googleapis.com/udpa.type.v1.TypedStruct
-            type_url: type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm
-            value:
-              config:
-                root_id: stats_outbound
-                configuration:
-                  "@type": "type.googleapis.com/google.protobuf.StringValue"
-                  value: |
-                    {
-                      "debug": "false",
-                      "stat_prefix": "istio"
-                    }
-                vm_config:
-                  vm_id: tcp_stats_outbound
-                  runtime: envoy.wasm.runtime.null
-                  code:
-                    local:
-                      inline_string: "envoy.wasm.stats"
-    - applyTo: NETWORK_FILTER
-      match:
-        context: GATEWAY
-        proxy:
-          proxyVersion: '^1\.15.*'
         listener:
           filterChain:
             filter:
@@ -7749,11 +7552,6 @@ data:
         zipkin:
           address: zipkin.istio-system:9411
     enablePrometheusMerge: true
-    extensionProviders:
-    - envoyOtelAls:
-        port: 4317
-        service: opentelemetry-collector.istio-system.svc.cluster.local
-      name: otel
     rootNamespace: istio-system
     trustDomain: cluster.local
 ---
@@ -7772,7 +7570,6 @@ data:
   values: |-
     {
       "global": {
-        "autoscalingv2API": true,
         "caAddress": "",
         "caName": "",
         "configCluster": false,
@@ -7867,7 +7664,7 @@ data:
         "sts": {
           "servicePort": 0
         },
-        "tag": "1.15.0",
+        "tag": "1.13.0",
         "tracer": {
           "datadog": {
             "address": "$(HOST_IP):8126"
@@ -7898,6 +7695,10 @@ data:
         "enableNamespacesByDefault": false,
         "injectedAnnotations": {},
         "neverInjectSelector": [],
+        "objectSelector": {
+          "autoInject": true,
+          "enabled": true
+        },
         "rewriteAppHTTPProbe": true,
         "templates": {}
       }
@@ -7954,14 +7755,10 @@ data:
             service.istio.io/canonical-name: {{ index .ObjectMeta.Labels `service.istio.io/canonical-name` | default (index .ObjectMeta.Labels `app.kubernetes.io/name`) | default (index .ObjectMeta.Labels `app`) | default .DeploymentMeta.Name  | quote }}
             service.istio.io/canonical-revision: {{ index .ObjectMeta.Labels `service.istio.io/canonical-revision` | default (index .ObjectMeta.Labels `app.kubernetes.io/version`) | default (index .ObjectMeta.Labels `version`) | default "latest"  | quote }}
           annotations: {
-            {{- if ge (len $containers) 1 }}
-            {{- if not (isset .ObjectMeta.Annotations `kubectl.kubernetes.io/default-logs-container`) }}
+            {{- if eq (len $containers) 1 }}
             kubectl.kubernetes.io/default-logs-container: "{{ index $containers 0 }}",
-            {{- end }}
-            {{- if not (isset .ObjectMeta.Annotations `kubectl.kubernetes.io/default-container`) }}
             kubectl.kubernetes.io/default-container: "{{ index $containers 0 }}",
-            {{- end }}
-            {{- end }}
+            {{ end }}
         {{- if .Values.istio_cni.enabled }}
             {{- if not .Values.istio_cni.chained }}
             k8s.v1.cni.cncf.io/networks: '{{ appendMultusNetwork (index .ObjectMeta.Annotations `k8s.v1.cni.cncf.io/networks`) `istio-cni` }}',
@@ -7978,7 +7775,6 @@ data:
             traffic.sidecar.istio.io/excludeOutboundPorts: "{{ annotation .ObjectMeta `traffic.sidecar.istio.io/excludeOutboundPorts` .Values.global.proxy.excludeOutboundPorts }}",
             {{- end }}
             {{ with index .ObjectMeta.Annotations `traffic.sidecar.istio.io/kubevirtInterfaces` }}traffic.sidecar.istio.io/kubevirtInterfaces: "{{.}}",{{ end }}
-            {{ with index .ObjectMeta.Annotations `traffic.sidecar.istio.io/excludeInterfaces` }}traffic.sidecar.istio.io/excludeInterfaces: "{{.}}",{{ end }}
         {{- end }}
           }
         spec:
@@ -8028,14 +7824,6 @@ data:
             {{ if (isset .ObjectMeta.Annotations `traffic.sidecar.istio.io/kubevirtInterfaces`) -}}
             - "-k"
             - "{{ index .ObjectMeta.Annotations `traffic.sidecar.istio.io/kubevirtInterfaces` }}"
-            {{ end -}}
-             {{ if (isset .ObjectMeta.Annotations `traffic.sidecar.istio.io/excludeInterfaces`) -}}
-            - "-c"
-            - "{{ index .ObjectMeta.Annotations `traffic.sidecar.istio.io/excludeInterfaces` }}"
-            {{ end -}}
-            - "--log_output_level={{ annotation .ObjectMeta `sidecar.istio.io/agentLogLevel` .Values.global.logging.level }}"
-            {{ if .Values.global.logAsJson -}}
-            - "--log_as_json"
             {{ end -}}
             {{ if .Values.istio_cni.enabled -}}
             - "--run-validation"
@@ -8291,17 +8079,10 @@ data:
             resources:
           {{ template "resources" . }}
             volumeMounts:
-            - name: workload-socket
-              mountPath: /var/run/secrets/workload-spiffe-uds
-            - name: credential-socket
-              mountPath: /var/run/secrets/credential-uds
             {{- if eq .Values.global.caName "GkeWorkloadCertificate" }}
             - name: gke-workload-certificate
               mountPath: /var/run/secrets/workload-spiffe-credentials
               readOnly: true
-            {{- else }}
-            - name: workload-certs
-              mountPath: /var/run/secrets/workload-spiffe-credentials
             {{- end }}
             {{- if eq .Values.global.pilotCertProvider "istiod" }}
             - mountPath: /var/run/secrets/istio
@@ -8340,17 +8121,10 @@ data:
               {{ end }}
               {{- end }}
           volumes:
-          - emptyDir:
-            name: workload-socket
-          - emptyDir:
-            name: credential-socket
           {{- if eq .Values.global.caName "GkeWorkloadCertificate" }}
           - name: gke-workload-certificate
             csi:
               driver: workloadcertificates.security.cloud.google.com
-          {{- else }}
-          - emptyDir:
-            name: workload-certs
           {{- end }}
           {{- if (isset .ObjectMeta.Annotations `sidecar.istio.io/bootstrapOverride`) }}
           - name: custom-bootstrap-volume
@@ -8415,7 +8189,7 @@ data:
             - name: {{ . }}
             {{- end }}
           {{- end }}
-          {{- if eq (env "ENABLE_LEGACY_FSGROUP_INJECTION" "false") "true" }}
+          {{- if eq (env "ENABLE_LEGACY_FSGROUP_INJECTION" "true") "true" }}
           securityContext:
             fsGroup: 1337
           {{- end }}
@@ -8553,17 +8327,10 @@ data:
               timeoutSeconds: 3
               failureThreshold: {{ .Values.global.proxy.readinessFailureThreshold }}
             volumeMounts:
-            - name: workload-socket
-              mountPath: /var/run/secrets/workload-spiffe-uds
-            - name: credential-socket
-              mountPath: /var/run/secrets/credential-uds
             {{- if eq .Values.global.caName "GkeWorkloadCertificate" }}
             - name: gke-workload-certificate
               mountPath: /var/run/secrets/workload-spiffe-credentials
               readOnly: true
-            {{- else }}
-            - name: workload-certs
-              mountPath: /var/run/secrets/workload-spiffe-credentials
             {{- end }}
             {{- if eq .Values.global.pilotCertProvider "istiod" }}
             - mountPath: /var/run/secrets/istio
@@ -8587,17 +8354,10 @@ data:
             - name: istio-podinfo
               mountPath: /etc/istio/pod
           volumes:
-          - emptyDir: {}
-            name: workload-socket
-          - emptyDir: {}
-            name: credential-socket
           {{- if eq .Values.global.caName "GkeWorkloadCertificate" }}
           - name: gke-workload-certificate
             csi:
               driver: workloadcertificates.security.cloud.google.com
-          {{- else}}
-          - emptyDir: {}
-            name: workload-certs
           {{- end }}
           # SDS channel between istioagent and Envoy
           - emptyDir:
@@ -8645,7 +8405,7 @@ data:
             - name: {{ . }}
             {{- end }}
           {{- end }}
-          {{- if eq (env "ENABLE_LEGACY_FSGROUP_INJECTION" "false") "true" }}
+          {{- if eq (env "ENABLE_LEGACY_FSGROUP_INJECTION" "true") "true" }}
           securityContext:
             fsGroup: 1337
           {{- end }}
@@ -8715,69 +8475,48 @@ data:
             - name: grpc-io-proxyless-bootstrap
               emptyDir: {}
       grpc-agent: |
-        {{- define "resources"  }}
-          {{- if or (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyCPU`) (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyMemory`) (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyCPULimit`) (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyMemoryLimit`) }}
-            {{- if or (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyCPU`) (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyMemory`) }}
-              requests:
-                {{ if (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyCPU`) -}}
-                cpu: "{{ index .ObjectMeta.Annotations `sidecar.istio.io/proxyCPU` }}"
-                {{ end }}
-                {{ if (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyMemory`) -}}
-                memory: "{{ index .ObjectMeta.Annotations `sidecar.istio.io/proxyMemory` }}"
-                {{ end }}
-            {{- end }}
-            {{- if or (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyCPULimit`) (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyMemoryLimit`) }}
-              limits:
-                {{ if (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyCPULimit`) -}}
-                cpu: "{{ index .ObjectMeta.Annotations `sidecar.istio.io/proxyCPULimit` }}"
-                {{ end }}
-                {{ if (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyMemoryLimit`) -}}
-                memory: "{{ index .ObjectMeta.Annotations `sidecar.istio.io/proxyMemoryLimit` }}"
-                {{ end }}
-            {{- end }}
-          {{- else }}
-            {{- if .Values.global.proxy.resources }}
-              {{ toYaml .Values.global.proxy.resources | indent 6 }}
-            {{- end }}
-          {{- end }}
-        {{- end }}
         {{- $containers := list }}
         {{- range $index, $container := .Spec.Containers }}{{ if not (eq $container.Name "istio-proxy") }}{{ $containers = append $containers $container.Name }}{{end}}{{- end}}
         metadata:
           labels:
-            {{/* security.istio.io/tlsMode: istio must be set by user, if gRPC is using mTLS initialization code. We can't set it automatically. */}}
             service.istio.io/canonical-name: {{ index .ObjectMeta.Labels `service.istio.io/canonical-name` | default (index .ObjectMeta.Labels `app.kubernetes.io/name`) | default (index .ObjectMeta.Labels `app`) | default .DeploymentMeta.Name  | quote }}
             service.istio.io/canonical-revision: {{ index .ObjectMeta.Labels `service.istio.io/canonical-revision` | default (index .ObjectMeta.Labels `app.kubernetes.io/version`) | default (index .ObjectMeta.Labels `version`) | default "latest"  | quote }}
           annotations: {
-            {{- if ge (len $containers) 1 }}
-            {{- if not (isset .ObjectMeta.Annotations `kubectl.kubernetes.io/default-logs-container`) }}
+            {{- if eq (len $containers) 1 }}
             kubectl.kubernetes.io/default-logs-container: "{{ index $containers 0 }}",
-            {{- end }}
-            {{- if not (isset .ObjectMeta.Annotations `kubectl.kubernetes.io/default-container`) }}
             kubectl.kubernetes.io/default-container: "{{ index $containers 0 }}",
-            {{- end }}
-            {{- end }}
+            {{ end }}
             sidecar.istio.io/rewriteAppHTTPProbers: "false",
           }
         spec:
           containers:
+          {{- range $index, $container := .Spec.Containers  }}
+          {{ if not (eq $container.Name "istio-proxy") }}
+          - name: {{ $container.Name }}
+            env:
+            - name: "GRPC_XDS_EXPERIMENTAL_SECURITY_SUPPORT"
+              value: "true"
+            - name: "GRPC_XDS_BOOTSTRAP"
+              value: "/etc/istio/proxy/grpc-bootstrap.json"
+            volumeMounts:
+            - mountPath: /var/lib/istio/data
+              name: istio-data
+            # UDS channel between istioagent and gRPC client for XDS/SDS
+            - mountPath: /etc/istio/proxy
+              name: istio-xds
+          {{- end }}
+          {{- end }}
           - name: istio-proxy
           {{- if contains "/" (annotation .ObjectMeta `sidecar.istio.io/proxyImage` .Values.global.proxy.image) }}
             image: "{{ annotation .ObjectMeta `sidecar.istio.io/proxyImage` .Values.global.proxy.image }}"
           {{- else }}
             image: "{{ .ProxyImage }}"
           {{- end }}
-            ports:
-            - containerPort: 15020
-              protocol: TCP
-              name: mesh-metrics
             args:
             - proxy
             - sidecar
             - --domain
             - $(POD_NAMESPACE).svc.{{ .Values.global.proxy.clusterDomain }}
-            - --proxyLogLevel={{ annotation .ObjectMeta `sidecar.istio.io/logLevel` .Values.global.proxy.logLevel }}
-            - --proxyComponentLogLevel={{ annotation .ObjectMeta `sidecar.istio.io/componentLogLevel` .Values.global.proxy.componentLogLevel }}
             - --log_output_level={{ annotation .ObjectMeta `sidecar.istio.io/agentLogLevel` .Values.global.logging.level }}
           {{- if .Values.global.sts.servicePort }}
             - --stsPort={{ .Values.global.sts.servicePort }}
@@ -8785,13 +8524,6 @@ data:
           {{- if .Values.global.logAsJson }}
             - --log_as_json
           {{- end }}
-            lifecycle:
-              postStart:
-                exec:
-                  command:
-                  - pilot-agent
-                  - wait
-                  - --url=http://localhost:15020/healthz/ready
             env:
             - name: ISTIO_META_GENERATOR
               value: grpc
@@ -8851,6 +8583,8 @@ data:
               value: "{{ $containers | join "," }}"
             - name: ISTIO_META_CLUSTER_ID
               value: "{{ valueOrDefault .Values.global.multiCluster.clusterName `Kubernetes` }}"
+            - name: ISTIO_META_INTERCEPTION_MODE
+              value: "{{ or (index .ObjectMeta.Annotations `sidecar.istio.io/interceptionMode`) .ProxyConfig.InterceptionMode.String }}"
             {{- if .Values.global.network }}
             - name: ISTIO_META_NETWORK
               value: "{{ .Values.global.network }}"
@@ -8888,24 +8622,38 @@ data:
             readinessProbe:
               httpGet:
                 path: /healthz/ready
-                port: 15020
+                port: {{ .Values.global.proxy.statusPort }}
               initialDelaySeconds: {{ annotation .ObjectMeta `readiness.status.sidecar.istio.io/initialDelaySeconds` .Values.global.proxy.readinessInitialDelaySeconds }}
               periodSeconds: {{ annotation .ObjectMeta `readiness.status.sidecar.istio.io/periodSeconds` .Values.global.proxy.readinessPeriodSeconds }}
               timeoutSeconds: 3
               failureThreshold: {{ annotation .ObjectMeta `readiness.status.sidecar.istio.io/failureThreshold` .Values.global.proxy.readinessFailureThreshold }}
+            {{ end -}}
             resources:
-          {{ template "resources" . }}
-            volumeMounts:
-            - name: workload-socket
-              mountPath: /var/run/secrets/workload-spiffe-uds
-            {{- if eq .Values.global.caName "GkeWorkloadCertificate" }}
-            - name: gke-workload-certificate
-              mountPath: /var/run/secrets/workload-spiffe-credentials
-              readOnly: true
-            {{- else }}
-            - name: workload-certs
-              mountPath: /var/run/secrets/workload-spiffe-credentials
+          {{- if or (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyCPU`) (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyMemory`) (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyCPULimit`) (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyMemoryLimit`) }}
+            {{- if or (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyCPU`) (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyMemory`) }}
+              requests:
+                {{ if (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyCPU`) -}}
+                cpu: "{{ index .ObjectMeta.Annotations `sidecar.istio.io/proxyCPU` }}"
+                {{ end }}
+                {{ if (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyMemory`) -}}
+                memory: "{{ index .ObjectMeta.Annotations `sidecar.istio.io/proxyMemory` }}"
+                {{ end }}
             {{- end }}
+            {{- if or (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyCPULimit`) (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyMemoryLimit`) }}
+              limits:
+                {{ if (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyCPULimit`) -}}
+                cpu: "{{ index .ObjectMeta.Annotations `sidecar.istio.io/proxyCPULimit` }}"
+                {{ end }}
+                {{ if (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyMemoryLimit`) -}}
+                memory: "{{ index .ObjectMeta.Annotations `sidecar.istio.io/proxyMemoryLimit` }}"
+                {{ end }}
+            {{- end }}
+          {{- else }}
+            {{- if .Values.global.proxy.resources }}
+              {{ toYaml .Values.global.proxy.resources | indent 6 }}
+            {{- end }}
+          {{- end }}
+            volumeMounts:
             {{- if eq .Values.global.pilotCertProvider "istiod" }}
             - mountPath: /var/run/secrets/istio
               name: istiod-ca-cert
@@ -8919,62 +8667,16 @@ data:
             - mountPath: /var/run/secrets/tokens
               name: istio-token
             {{- end }}
-            {{- if .Values.global.mountMtlsCerts }}
-            # Use the key and cert mounted to /etc/certs/ for the in-cluster mTLS communications.
-            - mountPath: /etc/certs/
-              name: istio-certs
-              readOnly: true
-            {{- end }}
             - name: istio-podinfo
               mountPath: /etc/istio/pod
-            {{- end }}
-              {{- if isset .ObjectMeta.Annotations `sidecar.istio.io/userVolumeMount` }}
-              {{ range $index, $value := fromJSON (index .ObjectMeta.Annotations `sidecar.istio.io/userVolumeMount`) }}
+            {{- if isset .ObjectMeta.Annotations `sidecar.istio.io/userVolumeMount` }}
+            {{ range $index, $value := fromJSON (index .ObjectMeta.Annotations `sidecar.istio.io/userVolumeMount`) }}
             - name: "{{  $index }}"
-              {{ toYaml $value | indent 6 }}
-              {{ end }}
-              {{- end }}
-        {{- range $index, $container := .Spec.Containers  }}
-        {{ if not (eq $container.Name "istio-proxy") }}
-          - name: {{ $container.Name }}
-            env:
-              - name: "GRPC_XDS_EXPERIMENTAL_SECURITY_SUPPORT"
-                value: "true"
-              - name: "GRPC_XDS_BOOTSTRAP"
-                value: "/etc/istio/proxy/grpc-bootstrap.json"
-            volumeMounts:
-              - mountPath: /var/lib/istio/data
-                name: istio-data
-              # UDS channel between istioagent and gRPC client for XDS/SDS
-              - mountPath: /etc/istio/proxy
-                name: istio-xds
-              {{- if eq $.Values.global.caName "GkeWorkloadCertificate" }}
-              - name: gke-workload-certificate
-                mountPath: /var/run/secrets/workload-spiffe-credentials
-                readOnly: true
-              {{- else }}
-              - name: workload-certs
-                mountPath: /var/run/secrets/workload-spiffe-credentials
-              {{- end }}
-        {{- end }}
-        {{- end }}
+            {{ toYaml $value | indent 6 }}
+            {{ end }}
+            {{- end }}
           volumes:
-          - emptyDir:
-            name: workload-socket
-          {{- if eq .Values.global.caName "GkeWorkloadCertificate" }}
-          - name: gke-workload-certificate
-            csi:
-              driver: workloadcertificates.security.cloud.google.com
-          {{- else }}
-          - emptyDir:
-            name: workload-certs
-          {{- end }}
-          {{- if (isset .ObjectMeta.Annotations `sidecar.istio.io/bootstrapOverride`) }}
-          - name: custom-bootstrap-volume
-            configMap:
-              name: {{ annotation .ObjectMeta `sidecar.istio.io/bootstrapOverride` "" }}
-          {{- end }}
-          # SDS channel between istioagent and Envoy
+          # UDS channel between istioagent and gRPC client for XDS/SDS
           - emptyDir:
               medium: Memory
             name: istio-xds
@@ -8989,7 +8691,7 @@ data:
                 - path: "annotations"
                   fieldRef:
                     fieldPath: metadata.annotations
-          {{- if eq .Values.global.jwtPolicy "third-party-jwt" }}
+        {{- if eq .Values.global.jwtPolicy "third-party-jwt" }}
           - name: istio-token
             projected:
               sources:
@@ -8997,39 +8699,18 @@ data:
                   path: istio-token
                   expirationSeconds: 43200
                   audience: {{ .Values.global.sds.token.aud }}
-          {{- end }}
+        {{- end }}
           {{- if eq .Values.global.pilotCertProvider "istiod" }}
           - name: istiod-ca-cert
             configMap:
               name: istio-ca-root-cert
           {{- end }}
-          {{- if .Values.global.mountMtlsCerts }}
-          # Use the key and cert mounted to /etc/certs/ for the in-cluster mTLS communications.
-          - name: istio-certs
-            secret:
-              optional: true
-              {{ if eq .Spec.ServiceAccountName "" }}
-              secretName: istio.default
-              {{ else -}}
-              secretName: {{  printf "istio.%s" .Spec.ServiceAccountName }}
-              {{  end -}}
-          {{- end }}
-            {{- if isset .ObjectMeta.Annotations `sidecar.istio.io/userVolume` }}
-            {{range $index, $value := fromJSON (index .ObjectMeta.Annotations `sidecar.istio.io/userVolume`) }}
+          {{- if isset .ObjectMeta.Annotations `sidecar.istio.io/userVolume` }}
+          {{range $index, $value := fromJSON (index .ObjectMeta.Annotations `sidecar.istio.io/userVolume`) }}
           - name: "{{ $index }}"
-            {{ toYaml $value | indent 4 }}
-            {{ end }}
-            {{ end }}
-          {{- if .Values.global.imagePullSecrets }}
-          imagePullSecrets:
-            {{- range .Values.global.imagePullSecrets }}
-            - name: {{ . }}
-            {{- end }}
-          {{- end }}
-          {{- if eq (env "ENABLE_LEGACY_FSGROUP_INJECTION" "false") "true" }}
-          securityContext:
-            fsGroup: 1337
-          {{- end }}
+          {{ toYaml $value | indent 4 }}
+          {{ end }}
+          {{ end }}
 ---
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
@@ -9049,6 +8730,7 @@ webhooks:
       namespace: istio-system
       path: "/inject"
       port: 443
+    caBundle: ""
   sideEffects: None
   rules:
   - operations: [ "CREATE" ]
@@ -9078,6 +8760,7 @@ webhooks:
       namespace: istio-system
       path: "/inject"
       port: 443
+    caBundle: ""
   sideEffects: None
   rules:
   - operations: [ "CREATE" ]
@@ -9109,6 +8792,7 @@ webhooks:
       namespace: istio-system
       path: "/inject"
       port: 443
+    caBundle: ""
   sideEffects: None
   rules:
   - operations: [ "CREATE" ]
@@ -9136,6 +8820,7 @@ webhooks:
       namespace: istio-system
       path: "/inject"
       port: 443
+    caBundle: ""
   sideEffects: None
   rules:
   - operations: [ "CREATE" ]
@@ -9202,8 +8887,45 @@ spec:
     spec:
       affinity:
         nodeAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution: null
-          requiredDuringSchedulingIgnoredDuringExecution: null
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+            weight: 2
+          - preference:
+              matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - arm64
+            weight: 2
+          - preference:
+              matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - ppc64le
+            weight: 2
+          - preference:
+              matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - s390x
+            weight: 2
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+                - arm64
+                - ppc64le
+                - s390x
       containers:
       - args:
         - proxy
@@ -9261,7 +8983,7 @@ spec:
           value: "true"
         - name: ISTIO_META_CLUSTER_ID
           value: Kubernetes
-        image: docker.io/istio/proxyv2:1.15.0
+        image: docker.io/istio/proxyv2:1.13.0
         name: istio-proxy
         ports:
         - containerPort: 8080
@@ -9296,12 +9018,6 @@ spec:
           privileged: false
           readOnlyRootFilesystem: true
         volumeMounts:
-        - mountPath: /var/run/secrets/workload-spiffe-uds
-          name: workload-socket
-        - mountPath: /var/run/secrets/credential-uds
-          name: credential-socket
-        - mountPath: /var/run/secrets/workload-spiffe-credentials
-          name: workload-certs
         - mountPath: /etc/istio/proxy
           name: istio-envoy
         - mountPath: /etc/istio/config
@@ -9328,12 +9044,6 @@ spec:
         runAsUser: 1337
       serviceAccountName: istio-egressgateway-service-account
       volumes:
-      - emptyDir: {}
-        name: workload-socket
-      - emptyDir: {}
-        name: credential-socket
-      - emptyDir: {}
-        name: workload-certs
       - configMap:
           name: istio-ca-root-cert
         name: istiod-ca-cert
@@ -9413,8 +9123,45 @@ spec:
     spec:
       affinity:
         nodeAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution: null
-          requiredDuringSchedulingIgnoredDuringExecution: null
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+            weight: 2
+          - preference:
+              matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - arm64
+            weight: 2
+          - preference:
+              matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - ppc64le
+            weight: 2
+          - preference:
+              matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - s390x
+            weight: 2
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+                - arm64
+                - ppc64le
+                - s390x
       containers:
       - args:
         - proxy
@@ -9472,7 +9219,7 @@ spec:
           value: "true"
         - name: ISTIO_META_CLUSTER_ID
           value: Kubernetes
-        image: docker.io/istio/proxyv2:1.15.0
+        image: docker.io/istio/proxyv2:1.13.0
         name: istio-proxy
         ports:
         - containerPort: 15021
@@ -9513,12 +9260,6 @@ spec:
           privileged: false
           readOnlyRootFilesystem: true
         volumeMounts:
-        - mountPath: /var/run/secrets/workload-spiffe-uds
-          name: workload-socket
-        - mountPath: /var/run/secrets/credential-uds
-          name: credential-socket
-        - mountPath: /var/run/secrets/workload-spiffe-credentials
-          name: workload-certs
         - mountPath: /etc/istio/proxy
           name: istio-envoy
         - mountPath: /etc/istio/config
@@ -9545,12 +9286,6 @@ spec:
         runAsUser: 1337
       serviceAccountName: istio-ingressgateway-service-account
       volumes:
-      - emptyDir: {}
-        name: workload-socket
-      - emptyDir: {}
-        name: credential-socket
-      - emptyDir: {}
-        name: workload-certs
       - configMap:
           name: istio-ca-root-cert
         name: istiod-ca-cert
@@ -9667,7 +9402,7 @@ spec:
           value: "false"
         - name: CLUSTER_ID
           value: Kubernetes
-        image: docker.io/istio/pilot:1.15.0
+        image: docker.io/istio/pilot:1.13.0
         name: discovery
         ports:
         - containerPort: 8080

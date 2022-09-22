@@ -65,18 +65,6 @@ class CryptoTransformer(kserve.Model):
 
         self.timeout = 100
 
-    def buildEntityRow(self, inputs) -> Dict:
-        """Build an entity row and return it as a dict.
-        Args:
-            inputs (Dict): entity ids to identify unique entities
-        Returns:
-            Dict: Returns the entity id attributes as an entity row
-        """
-        entity_rows = {}
-        for i in range(len(self.entity_ids)):
-            entity_rows[self.entity_ids[i]] = [instance[i] for instance in inputs['instances']]
-
-        return entity_rows
 
     def buildPredictRequest(self, inputs, features) -> Dict:
         """Build the predict request for all entities and return it as a dict.
@@ -127,19 +115,23 @@ class CryptoTransformer(kserve.Model):
         Returns:
             Dict: Returns the request input after ingesting online features
         """
-
+        logging.error(inputs)
         headers = {"Content-type": "application/json", "Accept": "application/json"}
-        params = {'features': self.feature_refs, 'entities': self.buildEntityRow(inputs),
+        params = {'features': self.feature_refs, 'entities': self.entity_ids[0],
                   'full_feature_names': True}
         json_params = json.dumps(params)
+        logging.error(f"json_params {json_params}")
 
         conn = http.client.HTTPConnection(self.feast_serving_url)
         conn.request("GET", "/get-online-features/", json_params, headers)
         resp = conn.getresponse()
+        logging.error(f"status {resp.status}")
         logging.info("The online feature rest request status is %s", resp.status)
         features = json.loads(resp.read().decode())
-
+        logging.error(f"input: {input}")
+        logging.error(f"features: {features}")
         outputs = self.buildPredictRequest(inputs, features)
+        logging.error(f"outputs: {outputs}")
 
         logging.info("The input for model predict is %s", outputs)
 
