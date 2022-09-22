@@ -17,6 +17,9 @@ check the url
 
 (might have to telepresence quit / telepresence connect)
 
+description of v2 api-docs
+https://kserve.github.io/website/modelserving/inference_api/
+
 check prometheus
 `http://prometheus.prometheus.svc.cluster.local`
 
