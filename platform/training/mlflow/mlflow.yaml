@@ -1,0 +1,187 @@
+---
+# Source: mlflow/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mlflow
+  namespace: mlflow
+  labels:
+    helm.sh/chart: mlflow-0.7.13
+    app: mlflow
+    app.kubernetes.io/name: mlflow
+    app.kubernetes.io/instance: mlflow
+    version: "1.28.0.19"
+    app.kubernetes.io/version: "1.28.0.19"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: mlflow/templates/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mlflow-env-secret
+  namespace: mlflow
+  labels:
+    app: mlflow
+    chart: mlflow-0.7.13
+    release: mlflow
+    heritage: Helm
+type: Opaque
+data:
+  PGUSER: bWxmbG93
+  PGPASSWORD: bWxmbG93
+  AWS_ACCESS_KEY_ID: bWxmbG93
+  AWS_SECRET_ACCESS_KEY: bWxmbG93MTIz
+---
+# Source: mlflow/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mlflow-env-configmap
+  namespace: mlflow
+  labels:
+    app: mlflow
+    chart: mlflow-0.7.13
+    release: mlflow
+    heritage: Helm
+data:
+  PGHOST: postgres-postgresql
+  PGPORT: "5432"
+  PGDATABASE: mlflow
+---
+# Source: mlflow/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mlflow-migrations
+  namespace: mlflow
+  labels:
+    app: mlflow
+    chart: mlflow-0.7.13
+    release: mlflow
+    heritage: Helm
+data:
+  migrations.py: |-
+    from mlflow.store.db import utils
+    import os
+    engine = utils.create_sqlalchemy_engine_with_retry("postgresql://")
+    utils._initialize_tables(engine)
+---
+# Source: mlflow/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mlflow
+  namespace: mlflow
+  labels:
+    helm.sh/chart: mlflow-0.7.13
+    app: mlflow
+    app.kubernetes.io/name: mlflow
+    app.kubernetes.io/instance: mlflow
+    version: "1.28.0.19"
+    app.kubernetes.io/version: "1.28.0.19"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http
+  selector:
+    app: mlflow
+    app.kubernetes.io/name: mlflow
+    app.kubernetes.io/instance: mlflow
+---
+# Source: mlflow/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlflow
+  namespace: mlflow
+  labels:
+    helm.sh/chart: mlflow-0.7.13
+    app: mlflow
+    app.kubernetes.io/name: mlflow
+    app.kubernetes.io/instance: mlflow
+    version: "1.28.0.19"
+    app.kubernetes.io/version: "1.28.0.19"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mlflow
+      app.kubernetes.io/name: mlflow
+      app.kubernetes.io/instance: mlflow
+  template:
+    metadata:
+      labels:
+        app: mlflow
+        app.kubernetes.io/name: mlflow
+        app.kubernetes.io/instance: mlflow
+    spec:
+      serviceAccountName: mlflow
+      securityContext:
+        {}
+      initContainers:
+        - name: mlflow-db-migration
+          securityContext:
+            {}
+          image: "burakince/mlflow:1.28.0.19"
+          imagePullPolicy: IfNotPresent
+          resources:
+            {}
+          envFrom:
+            - configMapRef:
+                name: mlflow-env-configmap
+            - secretRef:
+                name: mlflow-env-secret
+          command: ["python"]
+          args:
+            - /opt/mlflow/migrations.py
+          volumeMounts:
+            - name: migrations-config
+              mountPath: /opt/mlflow/migrations.py
+              subPath: migrations.py
+              readOnly: true
+      containers:
+        - name: mlflow
+          securityContext:
+            {}
+          image: "burakince/mlflow:1.28.0.19"
+          imagePullPolicy: IfNotPresent
+          command: ["mlflow"]
+          args:
+            - server
+            - --host=0.0.0.0
+            - --port=80
+            - --backend-store-uri=postgresql://
+            - --default-artifact-root=s3://mlflow/
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {}
+          env:
+            - name: MLFLOW_VERSION
+              value: "1.28.0.19"
+            - name: MLFLOW_S3_ENDPOINT_URL
+              value: "http://mlflow-minio.mlflow:9000"
+          envFrom:
+            - configMapRef:
+                name: mlflow-env-configmap
+            - secretRef:
+                name: mlflow-env-secret
+      volumes:
+        - name: migrations-config
+          configMap:
+            name: mlflow-migrations

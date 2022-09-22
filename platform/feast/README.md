@@ -3,7 +3,10 @@
 Deploy the Feast Feature Store
 `kubectl kustomize --enable-helm platform/feast/ | kubectl apply -n feast -f -`
 
+# Connect Telepresence
 
+`telepresence helm install`
+`telepresence conenct`
 
 # Populate the offline Store
 Install dependencies 

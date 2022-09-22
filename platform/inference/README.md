@@ -1,15 +1,15 @@
 # Model Serving
 
 Deploy the model serving environment including istio, knative-serving, cert-manager, kserve, prometheus.
-`kubectl kustomize platform/model-serving/ | kubectl create -f -`
+`kubectl kustomize platform/inferenz/ | kubectl create -f -`
 
 wait for all resources to be ready
 `watch kubectl get pods -A`
 
 # Test Model Serving
 Apply an inferencesverice
-`kubectl apply -f platform/model-serving/kserve/test.yaml`
-Wait till it becomes ready
+`kubectl apply -f demonstration/apps/basic-model/deployment`
+Wait till it becomes ready (takes some minutes)
 `watch kubectl get isvc`
 
 check the url 

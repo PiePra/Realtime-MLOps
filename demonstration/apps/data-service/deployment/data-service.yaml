@@ -33,7 +33,7 @@ spec:
         run: data-service
     spec:
       containers:
-      - image: docker.io/piepra/data-service:1.2
+      - image: docker.io/piepra/data-service:1.3
         imagePullPolicy: Always
         name: data-service
         ports:

@@ -1,0 +1,18 @@
+artifactRoot:
+  s3:
+    bucket: mlflow
+    awsAccessKeyId: mlflow
+    enabled: true
+    awsSecretAccessKey: mlflow123
+backendStore:
+  databaseMigration: true
+  postgres:
+    user: mlflow
+    password: mlflow
+    database: mlflow
+    enabled: true
+    host: postgres-postgresql
+extraEnvVars:
+  MLFLOW_S3_ENDPOINT_URL: http://mlflow-minio.mlflow:9000
+service:
+  port: 80

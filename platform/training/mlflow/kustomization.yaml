@@ -1,0 +1,15 @@
+resources:
+- namespace.yaml
+- postgres.yaml
+- mlflow.yaml
+helmCharts:
+- name: minio
+  repo: https://charts.bitnami.com/charts
+  version: 11.10.2
+  releaseName: mlflow
+  namespace: mlflow
+  valuesInline: 
+    auth:
+      rootUser: mlflow
+      rootPassword: mlflow123
+    defaultBuckets: mlflow
