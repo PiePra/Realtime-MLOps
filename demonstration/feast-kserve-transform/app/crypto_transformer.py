@@ -102,7 +102,7 @@ class CryptoTransformer(kserve.Model):
         """
         headers = {"Content-type": "application/json", "Accept": "application/json"}
         params = {'features': self.feature_refs, 'entities': {"symbol": self.entity_ids},
-                  'full_feature_names': True}
+                  'full_feature_names': False}
         json_params = json.dumps(params)
         r = requests.post("http://" + self.feast_serving_url + "/get-online-features/", data=json_params, headers=headers)
         logging.info("The online feature rest request status is %s", r.status_code)

@@ -15,7 +15,7 @@ spec:
       storageUri: s3://mlflow/1/85c8aa05f2ae4b84805247a911dfbbee/artifacts/model
   transformer:
     containers:
-    - image: piepra/feast-transformer:1.0
+    - image: piepra/feast-transformer:1.1
       name: btc-transfomer
       command:
       - "python"
