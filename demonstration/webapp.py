@@ -12,7 +12,7 @@ attributes = {
 
 
 def btc_button_callback():
-    event = CloudEvent(attributes, {"symbol": "BTC/USD"})
+    event = CloudEvent(attributes, {"symbol": "BTC/USD", "action": "predict"})
     headers, body = to_structured(event)
     requests.post("http://kafka-broker-ingress.knative-eventing.svc.cluster.local/default/crypto-prediction", data=body, headers=headers)
     st.json(body.decode(),  expanded=True)

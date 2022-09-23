@@ -122,6 +122,7 @@ class CryptoTransformer(kserve.Model):
             raw rankings into a different list.
         """
         logging.info("The output from model predict is %s", inputs)
+        inputs["symbol"] = self.entities[0]
         # if self.protocol == "grpc-v2":
         #     response = InferResult(inputs)
         #     return response.get_response(as_json=True)

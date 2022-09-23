@@ -47,7 +47,7 @@ def output_builder(worker_index, worker_count):
         }
         event = CloudEvent(attributes, item)
         headers, body = to_structured(event)
-        requests.post("http://kafka-broker-ingress.knative-eventing.svc.cluster.local/default/crypto-aggregated", data=body, headers=headers)
+        requests.post("http://kafka-broker-ingress.knative-eventing.svc.cluster.local/default/crypto-prediction", data=body, headers=headers)
         logging.info(f"worker {worker_index} created - {item}")
         push_data = {
             "push_source_name": "crypto_push_source",
@@ -56,7 +56,7 @@ def output_builder(worker_index, worker_count):
         }
         requests.post("http://feast-feature-server.feast.svc.cluster.local:80/push", json=push_data)
         logging.info(f"worker {worker_index} pushed to online store - {item['timestamp_created']}")
-        # We have to write directly to postgres because write offline store is not implemented for postgres based offline store yet
+        # We have to write directly to postgres because write offline store not implemented for postgres yet
         df = pd.DataFrame([item])
         df["timestamp"] = df["timestamp"].astype('datetime64[s]')
         df["timestamp_created"] = df["timestamp_created"].astype('datetime64[s]')
