@@ -1,12 +1,15 @@
 from datetime import timedelta
 
 from feast import (
+    KafkaSource, 
+    stream_feature_view,
     Entity,
     FeatureService,
     FeatureView,
     Field,
     PushSource,
 )
+from feast.data_format import JsonFormat
 from feast.types import Float32
 from feast.infra.offline_stores.contrib.postgres_offline_store.postgres_source import (
     PostgreSQLSource,
@@ -27,12 +30,6 @@ crypto_source = PostgreSQLSource(
     created_timestamp_column="timestamp_created"
 )
 
-#crypto_source = FileSource(
-#    name="crypto_source",
-#    path="/home/pierre/Realtime-MLOps/demonstration/apps/feature_store/feature_repo/data/BTC-2021min.parquet",
-#    timestamp_field="timestamp",
-#    created_timestamp_column="timestamp_created",
-#)
 
 # Our parquet files contain sample data that includes a driver_id column, timestamps and
 # three feature column. Here we define a Feature View that will allow us to serve this
@@ -58,6 +55,7 @@ crypto_fv = FeatureView(
     # feature view
     tags={"team": "crypto"},
 )
+
 
 crypto_sv = FeatureService(
     name="crypto_stats", features=[crypto_fv])
