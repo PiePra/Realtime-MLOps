@@ -19,7 +19,7 @@ data:
     \   def write(item):\n        attributes = {\n            \"type\": f\"cluster.local.aggregated_{item['symbol']}\",\n
     \           \"source\": \"https://cluster.local/dataflow\",\n        }\n        event
     = CloudEvent(attributes, item)\n        headers, body = to_structured(event)\n
-    \       requests.post(\"http://kafka-broker-ingress.knative-eventing.svc.cluster.local/default/crypto-aggregated\",
+    \       requests.post(\"http://kafka-broker-ingress.knative-eventing.svc.cluster.local/default/crypto-prediction\",
     data=body, headers=headers)\n        logging.info(f\"worker {worker_index} created
     - {item}\")\n        push_data = {\n            \"push_source_name\": \"crypto_push_source\",\n
     \           \"df\": item,\n            \"to\": \"online_and_offline\",\n        }\n
