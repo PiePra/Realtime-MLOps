@@ -1,0 +1,17 @@
+name: realtime-mlops
+dependencies:
+  - python=3.8
+  - pip
+  - pip:
+    - jupyterlab
+    - pandas
+    - feast
+    - feast[redis] 
+    - feast[postgres]
+    - boto3
+    - tensorflow
+    - mlflow
+    - sklearn
+    - matplotlib
+    - streamlit
+    - bytewax
