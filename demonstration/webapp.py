@@ -3,6 +3,7 @@ import pandas as pd
 from cloudevents.http import CloudEvent
 from cloudevents.conversion import to_structured
 import requests
+from datetime import datetime
 
 
 attributes = {
@@ -12,7 +13,7 @@ attributes = {
 
 
 def btc_button_callback():
-    event = CloudEvent(attributes, {"symbol": "BTC/USD", "action": "predict"})
+    event = CloudEvent(attributes, {"symbol": "BTC/USD", "type": "predict", "timestamp": datetime.now().timestamp()})
     headers, body = to_structured(event)
     requests.post("http://kafka-broker-ingress.knative-eventing.svc.cluster.local/default/crypto-prediction", data=body, headers=headers)
     st.json(body.decode(),  expanded=True)
