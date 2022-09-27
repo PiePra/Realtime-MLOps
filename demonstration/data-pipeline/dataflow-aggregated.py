@@ -45,29 +45,31 @@ def output_builder(worker_index, worker_count):
             "type": f"cluster.local.aggregated_{item['symbol']}",
             "source": "https://cluster.local/dataflow",
         }
-        event = item
+        event = item.copy()
         event["type"] = "ground_truth"
         event = CloudEvent(attributes, event)
         headers, body = to_structured(event)
         requests.post("http://kafka-broker-ingress.knative-eventing.svc.cluster.local/default/crypto-prediction", data=body, headers=headers)
-        logging.info(f"worker {worker_index} created - {item}")
+        for key in item.keys():
+            item[key] = [item[key]]
         push_data = {
             "push_source_name": "crypto_push_source",
             "df": item,
-            "to": "online_and_offline",
+            "to": "online",
         }
-        requests.post("http://feast-feature-server.feast.svc.cluster.local:80/push", json=push_data)
+        r = requests.post("http://feast-feature-server.feast.svc.cluster.local:80/push", json=push_data)
         logging.info(f"worker {worker_index} pushed to online store - {item['timestamp_created']}")
         # We have to write directly to postgres because write offline store not implemented for postgres yet
-        df = pd.DataFrame([item])
+        df = pd.DataFrame(item)
         df["timestamp"] = df["timestamp"].astype('datetime64[s]')
         df["timestamp_created"] = df["timestamp_created"].astype('datetime64[s]')
         df.to_sql("crypto_source", engine, if_exists='append', index=False)
-        logging.info(f"worker {worker_index} pushed to offlone store - {item['timestamp_created']}")
+        #logging.info(f"worker {worker_index} pushed to offlone store - {item['timestamp_created']}")
     return write
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     cc = SystemClockConfig()
     #cc = TestingClockConfig(start_at=datetime(2022, 1, 1, 13), item_incr = timedelta(minutes=1))
     wc = TumblingWindowConfig(length=timedelta(minutes=5))

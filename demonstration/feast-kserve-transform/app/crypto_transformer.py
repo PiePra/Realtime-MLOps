@@ -122,7 +122,7 @@ class CryptoTransformer(kserve.Model):
             raw rankings into a different list.
         """
         logging.info("The output from model predict is %s", inputs)
-        inputs.update({"symbol": self.entities[0]})
+        inputs.update({"symbol": self.entity_ids[0]})
         inputs.update({"type": "response"})
 
         return inputs

@@ -5,15 +5,20 @@ This setup enables and demonstrates online inferencing, realtime monitoring and 
 
 The platform is divided in 4 modules to enable different areas of realtime MLOps. 
 
-Kubernetes is used in conjunction with Github and ArgoCD to provide an Infrastructure-as-Code enabled way of managing the platform.
+Kubernetes is used in conjunction with Github to provide an Infrastructure-as-Code enabled way of managing the platform.
 Strimzi Kafka Operator and KNative Eventing are used to provide and abstract streaming capabilities in a Kubernetes-native way.
 To orchestrate modular ml pipelines tekton is used along with mlflow to store experiment metadata and model artifacts. Tekton enables event triggered pipeline runs.
 Inferencing is done by using KServe and Prometheus to allow model serving, model updating and model monitoring. 
 Feast is used as a feature store to orchestrate and serve features at low latency. 
 
 # Setup environment
-install dependencies
-`pip install jupyterlab pandas feast feast[redis] feast[postgres] boto3 pandas tensorflow mlflow sklearn matplotlib`
+create conda environment
+`make env`
+and activate
+`conda activate realtime-mlops`
+
+# Quickstart
+Simply use `make install` to install all components and run the examples.
 
 # Kind Setup
 Installation is provided in the form of kustomization and yaml manifests. The setup is developed and tested on Kubernetes v1.23.
