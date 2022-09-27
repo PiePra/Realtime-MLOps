@@ -1,6 +1,6 @@
 env:
 	echo "---- Creating Conda Env ----" 
-	conda env create -f kind/environment.yaml
+	conda env create -f infra/kind/environment.yaml
 
 delete-env:
 	echo "---- Deleting Conda Env ----" 
@@ -14,7 +14,7 @@ cluster:
 	echo "---- Installing Kind Cluster ----" 
 	sudo sysctl fs.inotify.max_user_watches=524288
 	sudo sysctl fs.inotify.max_user_instances=512	
-	kind create cluster --name realtime-mlops --config kind/kind.yaml
+	kind create cluster --name realtime-mlops --config infra/kind/kind.yaml
 	kubectl wait deployment -n kube-system coredns --for condition=Available=True --timeout=180s
 
 connect: 
@@ -62,7 +62,7 @@ inference:
 	kubectl wait deployment bitcoin-forecast-predictor-default-00001-deployment --for condition=Available=True --timeout=600s
 
 webapp:
-	streamlit run demonstration/webapp.py
+	python -m streamlit run demonstration/webapp.py
 	
 install:
 	make cluster connect feature-store streaming-system training inference
