@@ -45,7 +45,9 @@ def output_builder(worker_index, worker_count):
             "type": f"cluster.local.aggregated_{item['symbol']}",
             "source": "https://cluster.local/dataflow",
         }
-        event = CloudEvent(attributes, item.update({"type": "ground_truth"}))
+        event = item
+        event["type"] = "ground_truth"
+        event = CloudEvent(attributes, event)
         headers, body = to_structured(event)
         requests.post("http://kafka-broker-ingress.knative-eventing.svc.cluster.local/default/crypto-prediction", data=body, headers=headers)
         logging.info(f"worker {worker_index} created - {item}")

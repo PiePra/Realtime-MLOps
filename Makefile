@@ -30,6 +30,9 @@ feature-store:
 	kubectl wait deployment -n feast feature-store-feast-feature-server --for condition=Available=True --timeout=180s
 	echo "---- Loading Data into offline Store ----" 
 	python scripts/fill_offlinestore.py
+	echo "---- Creating Feature Store tables ----" 
+	(cd demonstration/feature_store/feature_repo ;feast apply)
+
 
 streaming-system:
 	echo "---- Installing Streaming System ----" 
@@ -59,7 +62,10 @@ inference:
 	kubectl wait deployment -n kserve kserve-controller-manager --for condition=Available=True --timeout=150s
 	kubectl apply -f demonstration/feast-kserve-transform/deployment
 	sleep 5
+	kubectl apply -f demonstration/realtime-monitoring/deployment
+	sleep 5
 	kubectl wait deployment bitcoin-forecast-predictor-default-00001-deployment --for condition=Available=True --timeout=600s
+	
 
 webapp:
 	python -m streamlit run demonstration/webapp.py

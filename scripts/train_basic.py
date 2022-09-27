@@ -89,28 +89,6 @@ with mlflow.start_run():
 
 storage_uri = f"{uri}/{model_artifact_name}"
 
-template_basic = f"""
-apiVersion: "serving.kserve.io/v1beta1"
-kind: "InferenceService"
-metadata:
-  name: "bitcoin-forecast"
-  namespace: default
-  labels:
-    networking.knative.dev/visibility: cluster-local
-spec:
-  predictor:
-    serviceAccountName: sa-s3
-    model:
-      modelFormat:
-        name: mlflow
-      protocolVersion: v2
-      storageUri: {storage_uri}
-"""
-
-with open('demonstration/basic-model/deployment/isvc.yaml', 'w+') as f:
-    f.writelines(template_basic)
-    logging.error("Wrote file demonstration/basic-model/deployment/isvc.yaml")
-
 template = f"""
 apiVersion: "serving.kserve.io/v1beta1"
 kind: "InferenceService"
@@ -153,4 +131,4 @@ spec:
 
 with open('demonstration/feast-kserve-transform/deployment/isvc.yaml', 'w+') as f:
     f.writelines(template)
-    logging.error("demonstration/feast-kserve-transform/deployment/isvc.yaml")
+    logging.info("wrote to demonstration/feast-kserve-transform/deployment/isvc.yaml")
