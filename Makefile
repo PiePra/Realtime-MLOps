@@ -60,7 +60,7 @@ training:
 inference:
 	echo "---- Installing Inference Components ----" 
 	kubectl kustomize platform/inference/ | kubectl create -f -
-	kubectl wait deployment -n kserve kserve-controller-manager --for condition=Available=True --timeout=150s
+	kubectl wait deployment -n kserve kserve-controller-manager --for condition=Available=True --timeout=300s
 	kubectl apply -f demonstration/feast-kserve-transform/deployment
 	sleep 5
 	kubectl apply -f demonstration/realtime-monitoring/deployment

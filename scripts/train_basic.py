@@ -100,15 +100,15 @@ metadata:
 spec:
   predictor:
     serviceAccountName: sa-s3
-    logger: 
-      mode: response
-      url: http://kafka-broker-ingress.knative-eventing.svc.cluster.local/default/crypto-prediction
     model:
       modelFormat:
         name: mlflow
       protocolVersion: v2
       storageUri: {storage_uri}
   transformer:
+    logger: 
+      mode: response
+      url: http://kafka-broker-ingress.knative-eventing.svc.cluster.local/default/crypto-prediction
     containers:
     - image: piepra/feast-transformer:1.2
       name: btc-transfomer
