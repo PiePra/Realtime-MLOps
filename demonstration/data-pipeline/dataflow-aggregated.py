@@ -44,7 +44,6 @@ def output_builder(worker_index, worker_count):
     engine = create_engine('postgresql://feast:feast@offline-store-postgresql.feast.svc.cluster.local:5432/feast')
     store = FeatureStore('./feature-repo')
     def write(item):
-        store.write_to_online_store("crypto_stats", item, allow_registry_cache = True)
         attributes = {
             "type": f"cluster.local.aggregated_{item['symbol']}",
             "source": "https://cluster.local/dataflow",
@@ -56,17 +55,13 @@ def output_builder(worker_index, worker_count):
         requests.post("http://kafka-broker-ingress.knative-eventing.svc.cluster.local/default/crypto-prediction", data=body, headers=headers)
         for key in item.keys():
             item[key] = [item[key]]
-        push_data = {
-            "push_source_name": "crypto_push_source",
-            "df": item,
-            "to": "online",
-        }
-        r = requests.post("http://feast-feature-server.feast.svc.cluster.local:80/push", json=push_data)
-        logging.info(f"worker {worker_index} pushed to online store - {item['timestamp_created']}")
+        #r = requests.post("http://feast-feature-server.feast.svc.cluster.local:80/push", json=push_data)
+        #logging.info(f"worker {worker_index} pushed to online store - {item['timestamp_created']}")
         # We have to write directly to postgres because write offline store not implemented for postgres yet
         df = pd.DataFrame(item)
         df["timestamp"] = df["timestamp"].astype('datetime64[s]')
         df["timestamp_created"] = df["timestamp_created"].astype('datetime64[s]')
+        store.write_to_online_store("crypto_stats", df, allow_registry_cache = True)
         df.to_sql("crypto_source", engine, if_exists='append', index=False)
     return write
 
@@ -76,7 +71,7 @@ if __name__ == "__main__":
     cc = SystemClockConfig()
     #cc = TestingClockConfig(start_at=datetime(2022, 1, 1, 13), item_incr = timedelta(minutes=1))
     wc = TumblingWindowConfig(length=timedelta(minutes=5))
-    input_config = KafkaInputConfig(["streaming-system-kafka-0.kafka.svc.cluster.local:9094"], "knative-broker-default-crypto", tail=True, starting_offset="end")
+    input_config = KafkaInputConfig(["streaming-system-kafka-0.kafka.svc.cluster.local:9094"], "knative-broker-default-crypto", tail=False, starting_offset="beginning")
     flow = Dataflow()
     flow.input("input", input_config)
     flow.flat_map(get_message)
