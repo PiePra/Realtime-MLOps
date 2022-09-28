@@ -71,7 +71,7 @@ if __name__ == "__main__":
     cc = SystemClockConfig()
     #cc = TestingClockConfig(start_at=datetime(2022, 1, 1, 13), item_incr = timedelta(minutes=1))
     wc = TumblingWindowConfig(length=timedelta(minutes=5))
-    input_config = KafkaInputConfig(["streaming-system-kafka-0.kafka.svc.cluster.local:9094"], "knative-broker-default-crypto", tail=False, starting_offset="beginning")
+    input_config = KafkaInputConfig(["streaming-system-kafka-0.kafka.svc.cluster.local:9094"], "knative-broker-default-crypto", tail=True, starting_offset="end")
     flow = Dataflow()
     flow.input("input", input_config)
     flow.flat_map(get_message)
