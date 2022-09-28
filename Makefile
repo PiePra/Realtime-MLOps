@@ -32,6 +32,7 @@ feature-store:
 	python scripts/fill_offlinestore.py
 	echo "---- Creating Feature Store tables ----" 
 	(cd demonstration/feature_store/feature_repo ;feast apply)
+	kubectl rollout restart deployment/feature-store-feast-feature-server -n feast
 
 
 streaming-system:

@@ -11,6 +11,8 @@ from cloudevents.conversion import to_structured
 import requests
 import pandas as pd
 from sqlalchemy import create_engine
+from feast import FeatureStore
+
 
 def get_message(msg):
     key, val = msg
@@ -40,7 +42,9 @@ def get_vals(msg):
 
 def output_builder(worker_index, worker_count):
     engine = create_engine('postgresql://feast:feast@offline-store-postgresql.feast.svc.cluster.local:5432/feast')
+    store = FeatureStore('./feature-repo')
     def write(item):
+        store.write_to_online_store("crypto_stats", item, allow_registry_cache = True)
         attributes = {
             "type": f"cluster.local.aggregated_{item['symbol']}",
             "source": "https://cluster.local/dataflow",
@@ -64,7 +68,6 @@ def output_builder(worker_index, worker_count):
         df["timestamp"] = df["timestamp"].astype('datetime64[s]')
         df["timestamp_created"] = df["timestamp_created"].astype('datetime64[s]')
         df.to_sql("crypto_source", engine, if_exists='append', index=False)
-        #logging.info(f"worker {worker_index} pushed to offlone store - {item['timestamp_created']}")
     return write
 
 

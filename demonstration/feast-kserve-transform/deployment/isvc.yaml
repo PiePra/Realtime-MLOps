@@ -16,7 +16,7 @@ spec:
       modelFormat:
         name: mlflow
       protocolVersion: v2
-      storageUri: s3://mlflow/1/2ab1b73e51e649c5ac177cb24fb6e0ef/artifacts/model
+      storageUri: s3://mlflow/1/d8feeb892f7f4ed5b4e6b2d55318e5ee/artifacts/model
   transformer:
     containers:
     - image: piepra/feast-transformer:1.2

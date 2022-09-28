@@ -173,6 +173,9 @@ spec:
           mountPath: /var/bytewax/
         - name: python-files
           mountPath: /tmp/bytewax/
+        - name: feature-store
+          mountPath: /var/bytewax/feature-repo/feature_store.yaml
+          subPath: feature_store.yaml
       terminationGracePeriodSeconds: 10
       containers:
       - name: process    
@@ -230,4 +233,7 @@ spec:
           name: bytewax
       - name: working-directory
         emptyDir: {}
+      - name: feature-store
+        configMap:
+          name: feature-store
 
