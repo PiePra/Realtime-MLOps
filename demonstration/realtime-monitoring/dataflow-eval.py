@@ -5,6 +5,7 @@ from bytewax.outputs import ManualOutputConfig, StdOutputConfig
 import pandas as pd
 from sqlalchemy import create_engine
 import json
+from datetime import datetime
 
 def get_message(msg):
     key, val = msg
@@ -37,6 +38,7 @@ def get_metric(session):
                 "diff": diff,
                 "model_name": line["model_name"],
                 "model_version": line["model_version"],
+                "timestamp": datetime.now().timestamp()
                 }
                 out.append(temp)
     return(out)

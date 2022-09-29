@@ -3,20 +3,20 @@ data:
   dataflow-eval.py: "from bytewax.dataflow import Dataflow\nfrom bytewax.execution
     import run_main\nfrom bytewax.inputs import KafkaInputConfig\nfrom bytewax.outputs
     import ManualOutputConfig, StdOutputConfig\nimport pandas as pd\nfrom sqlalchemy
-    import create_engine\nimport json\n\ndef get_message(msg):\n    key, val = msg\n
-    \   val = json.loads(val) \n    yield (val[\"symbol\"], [val])\n\ndef extend_session(session,
-    events):\n    session.extend(events)\n    return session\n\ndef session_complete(session):\n
-    \   return any(event[\"type\"] == \"ground_truth\" for event in session)\n\ndef
-    get_metric(session):\n    key, msg = session\n    out = []\n    if len(msg) >
-    1:\n        y = msg[-1][\"close\"]\n        symbol = msg[-1][\"symbol\"]\n        for
-    line in msg:\n            if line[\"type\"] == \"response\":\n                y_hat
+    import create_engine\nimport json\nfrom datetime import datetime\n\ndef get_message(msg):\n
+    \   key, val = msg\n    val = json.loads(val) \n    yield (val[\"symbol\"], [val])\n\ndef
+    extend_session(session, events):\n    session.extend(events)\n    return session\n\ndef
+    session_complete(session):\n    return any(event[\"type\"] == \"ground_truth\"
+    for event in session)\n\ndef get_metric(session):\n    key, msg = session\n    out
+    = []\n    if len(msg) > 1:\n        y = msg[-1][\"close\"]\n        symbol = msg[-1][\"symbol\"]\n
+    \       for line in msg:\n            if line[\"type\"] == \"response\":\n                y_hat
     = line[\"outputs\"][0][\"data\"][0]\n                diff = y - y_hat\n                if
     diff < 0:\n                    diff = diff * -1\n                temp = {\"type\":
     \"eval\",\n                \"symbol\": symbol,\n                \"y\": y,\n                \"y_hat\":
     y_hat,\n                \"diff\": diff,\n                \"model_name\": line[\"model_name\"],\n
-    \               \"model_version\": line[\"model_version\"],\n                }\n
-    \               out.append(temp)\n    return(out)\n\ndef output(worker_index,
-    worker_count):\n    engine = create_engine('postgresql://feast:feast@offline-store-postgresql.feast.svc.cluster.local:5432/feast')\n
+    \               \"model_version\": line[\"model_version\"],\n                \"timestamp\":
+    datetime.now().timestamp()\n                }\n                out.append(temp)\n
+    \   return(out)\n\ndef output(worker_index, worker_count):\n    engine = create_engine('postgresql://feast:feast@offline-store-postgresql.feast.svc.cluster.local:5432/feast')\n
     \   def write(item):\n        df = pd.DataFrame([item])\n        df.to_sql(\"metrics\",
     engine, if_exists='append', index=False)\n\n    return write\n\nif __name__ ==
     \"__main__\":\n    input_config = KafkaInputConfig([\"streaming-system-kafka-0.kafka.svc.cluster.local:9094\"],
