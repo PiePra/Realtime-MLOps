@@ -34,7 +34,7 @@ def get_metric(session):
                 "symbol": symbol,
                 "y": y,
                 "y_hat": y_hat,
-                "diff": int(),
+                "diff": diff,
                 "model_name": line["model_name"],
                 "model_version": line["model_version"],
                 }
