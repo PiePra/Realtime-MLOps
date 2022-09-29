@@ -32,11 +32,12 @@ close= r["results"][3]["values"]
 high = r["results"][4]["values"]
 columns = r["metadata"]["feature_names"]
 st.markdown("## Online Store")
+st.markdown("Currently served feature values")
 online = pd.DataFrame(list(zip(symbol, open, low, close, high)), columns=columns)
 st.dataframe(online)
 
 st.markdown("## Offline Store")
-
+st.markdown("20 most recent values in offline store")
 offline = pd.read_sql("select symbol, open, low, close, high, timestamp from crypto_source order by timestamp desc limit 20;", 
     con = create_engine('postgresql://feast:feast@offline-store-postgresql.feast.svc.cluster.local:5432/feast'))
 st.dataframe(offline)

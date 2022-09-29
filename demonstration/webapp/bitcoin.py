@@ -3,6 +3,7 @@ import pandas as pd
 import ast
 import subprocess
 import plotly.express as px
+from sqlalchemy import create_engine
 
 st.markdown("# Bitcoin")
 st.sidebar.markdown("# Bitcoin")
@@ -29,6 +30,13 @@ df = pd.DataFrame(events_json)
 df["timestamp"] = df["timestamp"].astype('datetime64[s]')
 btc = df[df["symbol"] == "BTC/USD"]
 
-st.plotly_chart(px.line(btc, x="timestamp", y="price", title='Price BTC/USD 1 min') )
-st.dataframe(btc.iloc[::-1][:10])
-
+st.plotly_chart(px.line(btc.iloc[-20:], x="timestamp", y="price", title='Price BTC/USD 1 min') )
+st.markdown("# Stream aggregation")
+st.markdown("We aggregate windows of 5 minutes to get open, high, low, close data for that window")
+col1, col2 = st.columns(2)
+with col1:
+    st.dataframe(btc.iloc[::-1][:10])
+with col2:
+    aggregated = pd.read_sql("select * from crypto_source where symbol = 'BTC/USD' order by timestamp desc limit 2;", 
+        con = create_engine('postgresql://feast:feast@offline-store-postgresql.feast.svc.cluster.local:5432/feast'))
+    st.dataframe(aggregated.drop("timestamp_created", axis=1))
