@@ -13,7 +13,7 @@ data:
     = line[\"outputs\"][0][\"data\"][0]\n                diff = y - y_hat\n                if
     diff < 0:\n                    diff = diff * -1\n                temp = {\"type\":
     \"eval\",\n                \"symbol\": symbol,\n                \"y\": y,\n                \"y_hat\":
-    y_hat,\n                \"diff\": int(),\n                \"model_name\": line[\"model_name\"],\n
+    y_hat,\n                \"diff\": diff,\n                \"model_name\": line[\"model_name\"],\n
     \               \"model_version\": line[\"model_version\"],\n                }\n
     \               out.append(temp)\n    return(out)\n\ndef output(worker_index,
     worker_count):\n    engine = create_engine('postgresql://feast:feast@offline-store-postgresql.feast.svc.cluster.local:5432/feast')\n

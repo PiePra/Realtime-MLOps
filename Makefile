@@ -69,7 +69,7 @@ inference:
 	
 
 webapp:
-	python -m streamlit run demonstration/webapp.py
+	python -m streamlit run demonstration/webapp/bitcoin.py
 	
 install:
 	make cluster connect feature-store streaming-system training inference
