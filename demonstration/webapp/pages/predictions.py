@@ -42,22 +42,30 @@ def post_event():
 
 st.markdown("## Predict")
 st.button("Create BTC Forecast Event!", help="Generates a CloudEvent to Predict", on_click=post_event)
-
-predict = df[df["type"] == "predict"]
-predict = predict.drop([ "low", "high", "open", "close", "timestamp_created", "model_name", 
-    "model_version", "id", "parameters", "outputs"], axis=1)
-st.dataframe(predict.head(1))
+try:
+    predict = df[df["type"] == "predict"]
+    predict = predict.drop([ "low", "high", "open", "close", "timestamp_created", "model_name", 
+        "model_version", "id", "parameters", "outputs"], axis=1)
+    st.dataframe(predict.head(1))
+except:
+    st.error("No prediction data yet")
 
 st.markdown("## Response")
 st.markdown("The model response event")
-response = df[df["type"] == "response"]
-response = response.drop(["timestamp_created", "low", "high", "open", "close", "parameters"], axis=1)
-response["outputs"] = response["outputs"].apply(lambda s: np.nan if s is np.nan else s[0]["data"][0])
-st.dataframe(response[["symbol", "type", "outputs", "model_name", "model_version", "id"]].head(1))
+try:
+    response = df[df["type"] == "response"]
+    response = response.drop(["timestamp_created", "low", "high", "open", "close", "parameters"], axis=1)
+    response["outputs"] = response["outputs"].apply(lambda s: np.nan if s is np.nan else s[0]["data"][0])
+    st.dataframe(response[["symbol", "type", "outputs", "model_name", "model_version", "id"]].head(1))
+except:
+    st.error("No response data yet, wait for prediction")
 
 st.markdown("## Ground Truth")
 st.markdown("New event of actual Data added every 5 min to evaluate performance in realtime")
-ground_truth = df[df["type"] == "ground_truth"]
-ground_truth = ground_truth.drop(["timestamp_created", "model_name", "model_version", "id", "parameters", "outputs"],axis=1)
-st.dataframe(ground_truth[ground_truth["symbol"] == 'BTC/USD'].head(3))
+try:
+    ground_truth = df[df["type"] == "ground_truth"]
+    ground_truth = ground_truth.drop(["timestamp_created", "model_name", "model_version", "id", "parameters", "outputs"],axis=1)
+    st.dataframe(ground_truth[ground_truth["symbol"] == 'BTC/USD'].head(3))
+except:
+    st.error("No ground truth data yet")
 

@@ -24,6 +24,16 @@ df['y'] = df['close'].shift(-1)
 df = df[:-1]
 df = df.resample('5Min').asfreq().dropna()
 
+#get eth
+df_eth = pd.read_csv('data/ETHUSD_5.csv', header = None, names = ["unix", "open", "high", "low", "close", "volume", "trades"])
+df_eth['unix'] = pd.to_datetime(df_eth['unix'], unit='s')
+df_eth = df_eth.set_index(pd.DatetimeIndex(df_eth['unix']))
+df_eth = df_eth.drop(df_eth[['volume', 'trades', 'unix']], axis=1)
+df_eth.sort_values(by='unix', inplace=True)
+
+#join
+df = df.join(df_eth, on='unix', how='inner', lsuffix='_btc', rsuffix='_eth')
+
 #get timestamp of first and last observation
 first = df.index[0].timestamp()
 last = df.index[-1].timestamp()
@@ -31,7 +41,7 @@ last = df.index[-1].timestamp()
 #prepare model data
 random_state = 42
 train_size = 0.8
-X = df[['open', 'high', 'low', 'close']]
+X = df[['open_btc', 'high_btc', 'low_btc', 'close_btc', 'open_eth', 'high_eth', 'low_eth', 'close_eth']]
 y = df['y']
 X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=train_size, random_state=random_state)
 
