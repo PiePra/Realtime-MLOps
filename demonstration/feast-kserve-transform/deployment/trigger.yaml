@@ -6,7 +6,7 @@ spec:
   broker: crypto-prediction
   filter:
     attributes:
-      type: cluster.local.predict_btc
+      type: cluster.local.aggregated_BTC/USD
   subscriber:
     ref:
       apiVersion: serving.kserve.io/v1beta1

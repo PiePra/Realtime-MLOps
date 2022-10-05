@@ -66,7 +66,7 @@ class CryptoTransformer(kserve.Model):
         self.timeout = 100
 
 
-    def buildPredictRequest(self, inputs, features) -> Dict:
+    def parseFeatures(self, features) -> Dict:
         """Build the predict request for all entities and return it as a dict.
         Args:
             inputs (Dict): entity ids from http request
@@ -74,15 +74,10 @@ class CryptoTransformer(kserve.Model):
         Returns:
             Dict: Returns the entity ids with features
         """
-        entity_name = "symbol"
         inputs = []
-        i = 0
-        for line in features['metadata']['feature_names']:
-            if line != entity_name:
-                value = features['results'][i]["values"]
-                entry ={"name": line, "shape": [1], "datatype": "FP64", "data": value}
-                inputs.append(entry)
-            i = i + 1
+        for key, val in features:
+            entry ={"name": key, "shape": [1], "datatype": "FP64", "data": val}
+            inputs.append(entry)
             
         result =  {
             "parameters": {
@@ -92,6 +87,25 @@ class CryptoTransformer(kserve.Model):
         }
 
         return result
+    
+    def get_features(self, suffix = "_eth"):
+        headers = {"Content-type": "application/json", "Accept": "application/json"}
+        params = {'features': self.feature_refs, 'entities': {"symbol": self.entity_ids},
+                  'full_feature_names': False}
+        json_params = json.dumps(params)
+        r = requests.post("http://" + self.feast_serving_url + "/get-online-features/", data=json_params, headers=headers)
+        logging.info("The online feature rest request status is %s", r.status_code)
+        r = r.json()
+        features = {}
+        entity_name = "symbol"
+        i = 0
+        for line in r['metadata']['feature_names']:
+            if line != entity_name:
+                value = r['results'][i]["values"]
+                features[line + suffix] = value
+            i = i + 1
+        return features
+
 
     def preprocess(self, inputs: Dict) -> Dict:
         """Pre-process activity of the crypto forefacst data.
@@ -100,14 +114,13 @@ class CryptoTransformer(kserve.Model):
         Returns:
             Dict: Returns the request input after ingesting online features
         """
-        headers = {"Content-type": "application/json", "Accept": "application/json"}
-        params = {'features': self.feature_refs, 'entities': {"symbol": self.entity_ids},
-                  'full_feature_names': False}
-        json_params = json.dumps(params)
-        r = requests.post("http://" + self.feast_serving_url + "/get-online-features/", data=json_params, headers=headers)
-        logging.info("The online feature rest request status is %s", r.status_code)
-        features = r.json()
-        outputs = self.buildPredictRequest(inputs, features)
+        features = {}
+        suffix = "_btc"
+        for key in ['open', 'high', 'low', 'close']:
+            features[key + suffix] = inputs[key]
+
+        features.update(self.get_features()) 
+        outputs = self.parseFeatures(features)
         logging.info("The input for model predict is %s", outputs)
 
         return outputs

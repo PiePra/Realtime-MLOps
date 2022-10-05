@@ -13,7 +13,7 @@ spec:
       modelFormat:
         name: mlflow
       protocolVersion: v2
-      storageUri: s3://mlflow/1/66b537a191214f37b4b6107aeec8970c/artifacts/model
+      storageUri: s3://mlflow/1/f8bf1836d85a457bb4a7d7ee537bf3f6/artifacts/model
   transformer:
     logger: 
       mode: response
@@ -28,7 +28,7 @@ spec:
       - --feast_serving_url
       - feast-feature-server.feast.svc.cluster.local:80
       - --entity_ids
-      - "BTC/USD"
+      - "ETH/USD"
       - --feature_refs
       - "crypto_stats:open"
       - "crypto_stats:high"

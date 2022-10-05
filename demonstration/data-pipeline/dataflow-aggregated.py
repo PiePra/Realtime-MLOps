@@ -52,7 +52,6 @@ def output_builder(worker_index, worker_count):
         event["type"] = "ground_truth"
         event = CloudEvent(attributes, event)
         headers, body = to_structured(event)
-        requests.post("http://kafka-broker-ingress.knative-eventing.svc.cluster.local/default/crypto-prediction", data=body, headers=headers)
         for key in item.keys():
             item[key] = [item[key]]
         #r = requests.post("http://feast-feature-server.feast.svc.cluster.local:80/push", json=push_data)
@@ -61,7 +60,11 @@ def output_builder(worker_index, worker_count):
         df = pd.DataFrame(item)
         df["timestamp"] = df["timestamp"].astype('datetime64[s]')
         df["timestamp_created"] = df["timestamp_created"].astype('datetime64[s]')
+        # Write online store
         store.write_to_online_store("crypto_stats", df, allow_registry_cache = True)
+        # Post Event
+        requests.post("http://kafka-broker-ingress.knative-eventing.svc.cluster.local/default/crypto-prediction", data=body, headers=headers)
+        # Write offline store
         df.to_sql("crypto_source", engine, if_exists='append', index=False)
     return write
 

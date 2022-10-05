@@ -20,22 +20,23 @@ data:
     = {\n            \"type\": f\"cluster.local.aggregated_{item['symbol']}\",\n            \"source\":
     \"https://cluster.local/dataflow\",\n        }\n        event = item.copy()\n
     \       event[\"type\"] = \"ground_truth\"\n        event = CloudEvent(attributes,
-    event)\n        headers, body = to_structured(event)\n        requests.post(\"http://kafka-broker-ingress.knative-eventing.svc.cluster.local/default/crypto-prediction\",
-    data=body, headers=headers)\n        for key in item.keys():\n            item[key]
-    = [item[key]]\n        #r = requests.post(\"http://feast-feature-server.feast.svc.cluster.local:80/push\",
+    event)\n        headers, body = to_structured(event)\n        for key in item.keys():\n
+    \           item[key] = [item[key]]\n        #r = requests.post(\"http://feast-feature-server.feast.svc.cluster.local:80/push\",
     json=push_data)\n        #logging.info(f\"worker {worker_index} pushed to online
     store - {item['timestamp_created']}\")\n        # We have to write directly to
     postgres because write offline store not implemented for postgres yet\n        df
     = pd.DataFrame(item)\n        df[\"timestamp\"] = df[\"timestamp\"].astype('datetime64[s]')\n
     \       df[\"timestamp_created\"] = df[\"timestamp_created\"].astype('datetime64[s]')\n
-    \       store.write_to_online_store(\"crypto_stats\", df, allow_registry_cache
-    = True)\n        df.to_sql(\"crypto_source\", engine, if_exists='append', index=False)\n
-    \   return write\n\n\nif __name__ == \"__main__\":\n    logging.basicConfig(level=logging.INFO)\n
-    \   cc = SystemClockConfig()\n    #cc = TestingClockConfig(start_at=datetime(2022,
-    1, 1, 13), item_incr = timedelta(minutes=1))\n    wc = TumblingWindowConfig(length=timedelta(minutes=5))\n
-    \   input_config = KafkaInputConfig([\"streaming-system-kafka-0.kafka.svc.cluster.local:9094\"],
-    \"knative-broker-default-crypto\", tail=True, starting_offset=\"end\")\n
-    \   flow = Dataflow()\n    flow.input(\"input\", input_config)\n    flow.flat_map(get_message)\n
+    \       # Write online store\n        store.write_to_online_store(\"crypto_stats\",
+    df, allow_registry_cache = True)\n        # Post Event\n        requests.post(\"http://kafka-broker-ingress.knative-eventing.svc.cluster.local/default/crypto-prediction\",
+    data=body, headers=headers)\n        # Write offline store\n        df.to_sql(\"crypto_source\",
+    engine, if_exists='append', index=False)\n    return write\n\n\nif __name__ ==
+    \"__main__\":\n    logging.basicConfig(level=logging.INFO)\n    cc = SystemClockConfig()\n
+    \   #cc = TestingClockConfig(start_at=datetime(2022, 1, 1, 13), item_incr = timedelta(minutes=1))\n
+    \   wc = TumblingWindowConfig(length=timedelta(minutes=5))\n    input_config =
+    KafkaInputConfig([\"streaming-system-kafka-0.kafka.svc.cluster.local:9094\"],
+    \"knative-broker-default-crypto\", tail=True, starting_offset=\"end\")\n    flow
+    = Dataflow()\n    flow.input(\"input\", input_config)\n    flow.flat_map(get_message)\n
     \   flow.fold_window(\"session_state_recovery\", cc, wc, list, append_price)\n
     \   flow.map(get_vals)\n    flow.capture(ManualOutputConfig(output_builder))\n
     \   run_main(flow)"
