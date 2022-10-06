@@ -29,6 +29,7 @@ for event in events[:-1]:
 df = pd.DataFrame(events_json)
 df["timestamp"] = df["timestamp"].astype('datetime64[s]')
 btc = df[df["symbol"] == "BTC/USD"]
+btc.sort_values(by="timestamp", inplace=True)
 
 st.plotly_chart(px.line(btc.iloc[-20:], x="timestamp", y="price", title='Price BTC/USD 1 min') )
 st.markdown("# Stream aggregation")

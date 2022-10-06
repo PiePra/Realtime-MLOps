@@ -21,7 +21,7 @@ attributes = {
 }
 
 def post_event(mode):
-    event = CloudEvent(attributes, {"type": "model_retrain", "mode": mode, "timestamp": datetime.now().timestamp()})
+    event = CloudEvent(attributes, {"type": "model_retrain", "mode": mode, "timestamp": datetime.utcnow().timestamp()})
     headers, body = to_structured(event)
     requests.post("http://kafka-broker-ingress.knative-eventing.svc.cluster.local/default/ml-training", data=body, headers=headers)
     st.write("Created event:")

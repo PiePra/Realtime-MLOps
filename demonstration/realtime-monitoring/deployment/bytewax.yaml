@@ -15,7 +15,7 @@ data:
     \"eval\",\n                \"symbol\": symbol,\n                \"y\": y,\n                \"y_hat\":
     y_hat,\n                \"diff\": diff,\n                \"model_name\": line[\"model_name\"],\n
     \               \"model_version\": line[\"model_version\"],\n                \"timestamp\":
-    datetime.now().timestamp()\n                }\n                out.append(temp)\n
+    datetime.utcnow().timestamp()\n                }\n                out.append(temp)\n
     \   return(out)\n\ndef output(worker_index, worker_count):\n    engine = create_engine('postgresql://feast:feast@offline-store-postgresql.feast.svc.cluster.local:5432/feast')\n
     \   def write(item):\n        df = pd.DataFrame([item])\n        df.to_sql(\"metrics\",
     engine, if_exists='append', index=False)\n\n    return write\n\nif __name__ ==

@@ -20,7 +20,7 @@ df = df.drop(df[['volume', 'trades', 'unix']], axis=1)
 df.sort_values(by='unix', inplace=True)
 
 #get y
-df['y'] = df['close_btc'].shift(-1)
+df['y'] = df['close'].shift(-1)
 df = df[:-1]
 #df = df.resample('5Min').asfreq().dropna()
 

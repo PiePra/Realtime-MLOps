@@ -35,7 +35,7 @@ def get_vals(msg):
         "high": max(prices),
         "open": prices[0],
         "close": prices[-1],
-        "timestamp": datetime.now().timestamp(),
+        "timestamp": datetime.utcnow().timestamp(),
         "timestamp_created": timestamps[-1]
     }
     return output

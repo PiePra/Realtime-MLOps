@@ -19,7 +19,7 @@ def run_demo():
     fetch_historical_features_entity_df(store, for_batch_scoring=True)
 
     print("\n--- Load features into online store ---")
-    store.materialize_incremental(end_date=datetime.now())
+    store.materialize_incremental(end_date=datetime.utcnow())
 
     print("\n--- Online features ---")
     fetch_online_features(store)
@@ -37,10 +37,10 @@ def run_demo():
         {
             "driver_id": [1001],
             "event_timestamp": [
-                datetime.now(),
+                datetime.utcnow(),
             ],
             "created": [
-                datetime.now(),
+                datetime.utcnow(),
             ],
             "conv_rate": [1.0],
             "acc_rate": [1.0],

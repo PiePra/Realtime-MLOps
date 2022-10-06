@@ -14,7 +14,7 @@ def get_ticker(ticker):
     try:
         
         r = requests.get(f'https://api.binance.com/api/v3/ticker/price?symbol={ticker.replace("/", "") + "T"}')
-        data = {"price": float(r.json()['price']), "timestamp": datetime.now().timestamp(), "symbol": ticker}
+        data = {"price": float(r.json()['price']), "timestamp": datetime.utcnow().timestamp(), "symbol": ticker}
         try:
             event = CloudEvent(attributes, data)
             headers, body = to_structured(event)

@@ -13,7 +13,7 @@ data:
     msg = msg\n    prices = [item[0] for item in msg]\n    timestamps = [item[1] for
     item in msg]\n\n    output = {\n        \"symbol\": key,\n        \"low\": min(prices),\n
     \       \"high\": max(prices),\n        \"open\": prices[0],\n        \"close\":
-    prices[-1],\n        \"timestamp\": datetime.now().timestamp(),\n        \"timestamp_created\":
+    prices[-1],\n        \"timestamp\": datetime.utcnow().timestamp(),\n        \"timestamp_created\":
     timestamps[-1]\n    }\n    return output\n\ndef output_builder(worker_index, worker_count):\n
     \   engine = create_engine('postgresql://feast:feast@offline-store-postgresql.feast.svc.cluster.local:5432/feast')\n
     \   store = FeatureStore('./feature-repo')\n    def write(item):\n        attributes

@@ -141,6 +141,6 @@ class CryptoTransformer(kserve.Model):
         logging.info("The output from model predict is %s", inputs)
         inputs.update({"symbol": self.entity_ids[0]})
         inputs.update({"type": "response"})
-        inputs.update({"timestamp_created": datetime.now().timestamp()})
+        inputs.update({"timestamp_created": datetime.utcnow().timestamp()})
 
         return inputs

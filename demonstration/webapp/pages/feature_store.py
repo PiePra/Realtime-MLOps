@@ -16,7 +16,7 @@ features=[
     "crypto_stats:close",
 ]
 
-st.markdown("Values in feature store as of " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+st.markdown("Values in feature store as of " + datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"))
 
 headers = {"Content-type": "application/json", "Accept": "application/json"}
 params = {'features': features, 'entities': {"symbol": ["BTC/USD", "ETH/USD"]},
