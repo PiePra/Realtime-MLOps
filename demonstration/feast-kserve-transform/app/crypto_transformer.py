@@ -17,6 +17,7 @@ import kserve
 import requests
 import json
 import numpy as np
+from datetime import datetime
 #from tritonclient.grpc import service_pb2 as pb
 #from tritonclient.grpc import InferResult
 
@@ -75,7 +76,7 @@ class CryptoTransformer(kserve.Model):
             Dict: Returns the entity ids with features
         """
         inputs = []
-        for key, val in features:
+        for key, val in features.items():
             entry ={"name": key, "shape": [1], "datatype": "FP64", "data": val}
             inputs.append(entry)
             
@@ -114,10 +115,13 @@ class CryptoTransformer(kserve.Model):
         Returns:
             Dict: Returns the request input after ingesting online features
         """
+        data = inputs.data.decode()
+        data = json.loads(data)
+
         features = {}
         suffix = "_btc"
         for key in ['open', 'high', 'low', 'close']:
-            features[key + suffix] = inputs[key]
+            features[key + suffix] = data[key]
 
         features.update(self.get_features()) 
         outputs = self.parseFeatures(features)
@@ -137,5 +141,6 @@ class CryptoTransformer(kserve.Model):
         logging.info("The output from model predict is %s", inputs)
         inputs.update({"symbol": self.entity_ids[0]})
         inputs.update({"type": "response"})
+        inputs.update({"timestamp_created": datetime.now().timestamp()})
 
         return inputs

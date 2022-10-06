@@ -13,16 +13,16 @@ from sklearn.model_selection import train_test_split
 logging.basicConfig(level=logging.ERROR)
 
 #read and prepare dataframe
-df = pd.read_csv('data/BTC-2021min.csv')
+df = pd.read_csv('data/BTCUSD_5.csv', header = None, names = ["unix", "open", "high", "low", "close", "volume", "trades"])
 df['unix'] = pd.to_datetime(df['unix'], unit='s')
 df = df.set_index(pd.DatetimeIndex(df['unix']))
-df = df.drop(df[['symbol', 'Volume BTC', 'Volume USD', 'date', 'unix']], axis=1)
+df = df.drop(df[['volume', 'trades', 'unix']], axis=1)
 df.sort_values(by='unix', inplace=True)
 
-#resample to 5 mins
+#get y
 df['y'] = df['close'].shift(-1)
 df = df[:-1]
-df = df.resample('5Min').asfreq().dropna()
+#df = df.resample('5Min').asfreq().dropna()
 
 #get eth
 df_eth = pd.read_csv('data/ETHUSD_5.csv', header = None, names = ["unix", "open", "high", "low", "close", "volume", "trades"])
@@ -70,11 +70,11 @@ with mlflow.start_run():
     
     model = Sequential()
     model.add(Dense(32, input_shape=(X_train.shape[-1],), activation="relu", name="hidden_layer"))
-    model.add(Dense(16))
+    model.add(Dense(32))
     model.add(Dense(1))
     model.compile(loss="mse", optimizer="adam")
     
-    model.fit(X_train, y_train, epochs=5, batch_size=100, validation_split=.2)
+    model.fit(X_train, y_train, epochs=15, batch_size=100, validation_split=.2)
             
     # Evaluate the best model with testing data.
     y_hat = model.predict(X_test)
@@ -120,7 +120,7 @@ spec:
       mode: response
       url: http://kafka-broker-ingress.knative-eventing.svc.cluster.local/default/crypto-prediction
     containers:
-    - image: piepra/feast-transformer:1.2
+    - image: piepra/feast-transformer:1.8
       name: btc-transfomer
       command:
       - "python"

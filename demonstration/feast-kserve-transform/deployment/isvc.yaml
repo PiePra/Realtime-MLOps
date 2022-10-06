@@ -13,13 +13,13 @@ spec:
       modelFormat:
         name: mlflow
       protocolVersion: v2
-      storageUri: s3://mlflow/1/f8bf1836d85a457bb4a7d7ee537bf3f6/artifacts/model
+      storageUri: s3://mlflow/1/bcc3925d703e44678f8814bb12b9e6f2/artifacts/model
   transformer:
     logger: 
       mode: response
       url: http://kafka-broker-ingress.knative-eventing.svc.cluster.local/default/crypto-prediction
     containers:
-    - image: piepra/feast-transformer:1.2
+    - image: piepra/feast-transformer:1.8
       name: btc-transfomer
       command:
       - "python"
@@ -28,7 +28,7 @@ spec:
       - --feast_serving_url
       - feast-feature-server.feast.svc.cluster.local:80
       - --entity_ids
-      - "ETH/USD"
+      - "BTC/USD"
       - --feature_refs
       - "crypto_stats:open"
       - "crypto_stats:high"
