@@ -38,7 +38,7 @@ def get_metric(session):
                 "diff": diff,
                 "model_name": line["model_name"],
                 "model_version": line["model_version"],
-                "timestamp": datetime.now().timestamp()
+                "timestamp": datetime.utcnow().timestamp()
                 }
                 out.append(temp)
     return(out)
