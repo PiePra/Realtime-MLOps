@@ -13,7 +13,7 @@ spec:
       modelFormat:
         name: mlflow
       protocolVersion: v2
-      storageUri: s3://mlflow/1/0a2df9ab40bc432ebd45d6931bc485c0/artifacts/BitcoinForecast
+      storageUri: s3://mlflow/1/46b3d75ae57c4ae4a0b36b6807c5429a/artifacts/model
   transformer:
     logger: 
       mode: response

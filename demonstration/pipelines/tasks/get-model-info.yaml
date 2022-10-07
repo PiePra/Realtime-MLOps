@@ -1,0 +1,67 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: get-model-info
+  labels:
+    app.kubernetes.io/version: "0.6"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.17.0"
+    tekton.dev/categories: Image Build
+    tekton.dev/tags: image-build
+    tekton.dev/displayName: "Get historical feature values from offline store"
+    tekton.dev/platforms: "linux/amd64"
+spec:
+  description: >-
+    This Task queries MLFlow to load run and model params.
+    This Task loads version and param to Workspace.
+  params:
+    - name: mlflow_tracking_uri
+      description: Reachable MLFlow service.
+    - name: mlflow_model_name
+      description: Name of MLFlow model to load.
+  workspaces:
+    - name: shared-workspace
+      description: This workspace contains model parameters from MLFlow.
+  results:
+    - name: features-to
+      description: timestamp of last observation.
+    - name: feature-service
+      description: name of the feature service.
+    - name: random-state
+      description: The random seed
+  steps:
+    - name: query-mlflow
+      image: docker.io/piepra/ml-executor:1.5
+      script: | 
+        #!/usr/bin/env bash
+        pyscript=$(cat <<'EOF'        
+        import argparse
+        import mlflow
+        import pickle
+
+        parser = argparse.ArgumentParser(description='Load offline features.')
+        parser.add_argument('--mlflow_tracking_uri', help='Reachable MLFlow URI.', type=str, required = True)
+        parser.add_argument('--mlflow_model_name', help='The name of the mlflow model.', type=str, required = True)
+        parser.add_argument('--destination', help='The pickle file destination', type=str, default = ".")
+        args = parser.parse_args()
+
+        mlflow.set_tracking_uri(args.mlflow_tracking_uri)
+        client = mlflow.MlflowClient()
+        models = client.search_registered_models(filter_string=f"name = '{args.mlflow_model_name}'")
+        model = models[-1]
+
+        version = model.latest_versions[-1]
+        run = client.get_run(version.run_id)
+
+        with open(args.destination + '/model', 'wb') as f:
+            pickle.dump(model, f)
+        with open(args.destination + '/run', 'wb') as f:
+            pickle.dump(run, f)
+
+        with open("$(results.features-to.path)", 'a') as f: f.write(run.data.params["data_to"])
+        with open("$(results.feature-service.path)", 'a') as f: f.write(run.data.params["feature_view"])
+        with open("$(results.random-state.path)", 'a') as f: f.write(run.data.params["random_state"])
+        EOF
+        )
+        python -c "$pyscript" --mlflow_tracking_uri $(params.mlflow_tracking_uri) --mlflow_model_name $(params.mlflow_model_name) \
+        --destination $(workspaces.shared-workspace.path)

@@ -1,0 +1,102 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: get-historical-features
+  labels:
+    app.kubernetes.io/version: "0.6"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.17.0"
+    tekton.dev/categories: Image Build
+    tekton.dev/tags: image-build
+    tekton.dev/displayName: "Get historical feature values from offline store"
+    tekton.dev/platforms: "linux/amd64"
+spec:
+  description: >-
+    This Task queries a feast feature server to load historical features.
+    This Task stores the historical features in csv format to a workspace.
+  params:
+    - name: feature_service
+      description: The name of the feature service.
+    - name: entity_name
+      description: Name of the entity.
+      default: ""
+    - name: entity_ids
+      description: Space separated string of entity ids.
+    - name: features_from
+      description: Get features since this time.
+    - name: features_to
+      description: Get features up to this time.
+      default: ""
+    - name: frequency
+      description: The frequency interval.
+      default: "5min"
+  workspaces:
+    - name: shared-workspace
+      description: this workspace contains the retrieved features.
+    - name: feature-store
+      description: this workspace contains the feature_store.yaml.
+  steps:
+    - name: query-and-write
+      image: docker.io/piepra/ml-executor:1.5
+      script: | 
+        #!/usr/bin/env bash
+        pyscript=$(cat <<'EOF'
+        import argparse
+        from feast import FeatureStore
+        from datetime import datetime
+        import pandas as pd
+
+        parser = argparse.ArgumentParser(description='Load offline features.')
+        parser.add_argument('--feature_store', help='The location of feature_store.yaml.', type=str, required = True)
+        parser.add_argument('--feature_service', help='The name of the feature service.', type=str, required = True)
+        parser.add_argument('--entity_name', help='Name of the entity.', type=str, required = True)
+        parser.add_argument('--entity_ids', help='List of entity ids', type=str, nargs="+", required = True)
+        parser.add_argument('--from_time', help='Name of the entity.', type=float, required = True)
+        parser.add_argument('--to_time', help='Get features since this time.', type=float, default=datetime.utcnow().timestamp())
+        parser.add_argument('--frequency', help=' The frequency interval.', type=str, default = "5min")
+        parser.add_argument('--destination', help='The csv file destination', type=str, default = "./")
+        args = parser.parse_args()
+
+        FEATURE_SERVICE = args.feature_service
+        ENTITY = args.entity_name
+        ENTITY_IDs = args.entity_ids
+        FROM = args.from_time
+        TO = args.to_time
+        FREQUENCY= args.frequency
+
+        entity_dfs = []
+        for entity_id in ENTITY_IDs:
+            entity_df = pd.DataFrame.from_dict(
+                {
+                    ENTITY: entity_id,
+                    "event_timestamp": [item for item in pd.date_range(datetime.fromtimestamp(FROM), datetime.utcnow(), freq=FREQUENCY)]
+                }
+            )
+            entity_dfs.append(entity_df)
+            
+        feature_store = FeatureStore(args.feature_store)  # Initialize the feature store
+        feature_service = feature_store.get_feature_service(FEATURE_SERVICE)
+
+        training_dfs = []
+        for entity_df in entity_dfs:
+            training_df = feature_store.get_historical_features(features=feature_service, entity_df=entity_df).to_df()
+            training_df = training_df.set_index(pd.DatetimeIndex(training_df['event_timestamp']))
+            training_dfs.append(training_df)
+            
+        for i in range(1, len(training_dfs)):
+            df = training_dfs[0].join(training_dfs[i], lsuffix="_"+ENTITY_IDs[0][:3].lower(), rsuffix="_"+ENTITY_IDs[i][:3].lower())
+            
+        df = df.dropna()
+        first = df.index[0].timestamp()
+        last = df.index[-1].timestamp()
+
+        df['y'] = df['close_btc'].shift(-1)
+        df = df.iloc[:-1]
+
+        keys = [x for x in df.columns if "symbol" not in x and "timestamp" not in x]
+        df = df[keys].drop_duplicates()
+        df.to_csv(args.destination + '/' + 'features.csv')
+        EOF
+        )
+        python -c "$pyscript" --feature_service $(params.feature_service) --entity_name $(params.entity_name)  --entity_ids $(params.entity_ids) \
+        --from_time $(params.features_from) --feature_store $(workspaces.feature-store.path) --destination $(workspaces.shared-workspace.path)
