@@ -60,7 +60,10 @@ spec:
 
         with open("$(results.features-to.path)", 'a') as f: f.write(run.data.params["data_to"])
         with open("$(results.feature-service.path)", 'a') as f: f.write(run.data.params["feature_view"])
-        with open("$(results.random-state.path)", 'a') as f: f.write(run.data.params["random_state"])
+        try:
+            with open("$(results.random-state.path)", 'a') as f: f.write(run.data.params["random_state"])
+        except KeyError:
+            with open("$(results.random-state.path)", 'a') as f: f.write("42")
         EOF
         )
         python -c "$pyscript" --mlflow_tracking_uri $(params.mlflow_tracking_uri) --mlflow_model_name $(params.mlflow_model_name) \

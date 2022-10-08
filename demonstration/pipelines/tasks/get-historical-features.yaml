@@ -87,11 +87,11 @@ spec:
             df = training_dfs[0].join(training_dfs[i], lsuffix="_"+ENTITY_IDs[0][:3].lower(), rsuffix="_"+ENTITY_IDs[i][:3].lower())
             
         df = df.dropna()
-        first = df.index[0].timestamp()
-        last = df.index[-1].timestamp()
-
         df['y'] = df['close_btc'].shift(-1)
         df = df.iloc[:-1]
+
+        first = df.index[0].timestamp()
+        last = df.index[-1].timestamp()
 
         keys = [x for x in df.columns if "symbol" not in x and "timestamp" not in x]
         df = df[keys].drop_duplicates()

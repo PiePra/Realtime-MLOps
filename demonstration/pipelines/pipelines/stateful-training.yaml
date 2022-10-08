@@ -17,6 +17,8 @@ spec:
     type: string
   - name: entity_ids
     type: string
+  - name: service_name
+    type: string
   workspaces:
   - name: shared-workspace
   - name: feature-store
@@ -66,3 +68,12 @@ spec:
       value: $(params.mlflow_experiment_name)
     - name: random_state
       value: "$(tasks.gather-model-info.results.random-state)"
+  - name: update-model-revision
+    runAfter: ["fit-model-incremental"]
+    taskRef:
+      name: set-model-revision
+    params:
+    - name: service_name
+      value: $(params.service_name)
+    - name: storage_uri
+      value: $(tasks.fit-model-incremental.results.storage-uri)

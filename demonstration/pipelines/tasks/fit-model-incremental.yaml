@@ -27,7 +27,7 @@ spec:
     - name: shared-workspace
       description: This workspace contains model parameters from MLFlow.
   results:
-    - name: model-uri
+    - name: storage-uri
       description: The uri of the stored model in s3.
   steps:
     - name: load-and-fit
@@ -52,7 +52,7 @@ spec:
         parser.add_argument('--mlflow_experiment_name', help='The name of the MLFlow experiment.', type=str, required = True)
         parser.add_argument('--mlflow_tracking_uri', help='Reachable MLFlow URI.', type=str, required = True)
         parser.add_argument('--mlflow_model_name', help='Name of the MLFlow model.', type=str, required = True)
-        parser.add_argument('--random_state', help='The random seed.', type=int, default = 42)
+        parser.add_argument('--random_state', help='The random seed.', type=str, default = "42")
         parser.add_argument('--destination', help='The pickle file destination', type=str, default = ".")
         args = parser.parse_args()
 
@@ -96,9 +96,9 @@ spec:
             mlflow.log_params(lr)
             model_signature = infer_signature(X, y)
             info = mlflow.keras.log_model(model, "model", registered_model_name="BitcoinForecast", signature=model_signature)
-        uri = mlflow.get_artifact_uri()
-        print(uri)
-
+            uri = mlflow.get_artifact_uri()
+            storage_uri = f"{uri}/model"
+        with open("$(results.storage-uri.path)", 'a') as f: f.write(storage_uri)
         EOF
         )
         python -c "$pyscript" --mlflow_tracking_uri $(params.mlflow_tracking_uri) --mlflow_model_name $(params.mlflow_model_name) \
