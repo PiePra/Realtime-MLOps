@@ -62,12 +62,12 @@ try:
 except:
     st.error("No metrics data available yet")
 
-st.markdown("## Model retraining")
-col1, col2 = st.columns(2)
-with col1:
-    if st.button("Start stateful training!", help="Generates a CloudEvent to do stateful retraining"):
-        post_event("stateful")
+# st.markdown("## Model retraining")
+# col1, col2 = st.columns(2)
+# with col1:
+#     if st.button("Start stateful training!", help="Generates a CloudEvent to do stateful retraining"):
+#         post_event("stateful")
 
-with col2:
-    if st.button("Start stateless training!", help="Generates a CloudEvent to do full retraining"):
-        post_event("stateless")
+# with col2:
+#     if st.button("Start stateless training!", help="Generates a CloudEvent to do full retraining"):
+#         post_event("stateless")

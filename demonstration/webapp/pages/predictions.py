@@ -34,7 +34,8 @@ try:
     response = df[df["type"] == "response"]
     response = response.drop(["low", "high", "open", "close", "parameters"], axis=1)
     response["outputs"] = response["outputs"].apply(lambda s: np.nan if s is np.nan else s[0]["data"][0])
-    st.dataframe(response[["symbol", "type", "outputs", "model_name", "model_version", "timestamp_created", "id"]].head(4))
+    response.sort_values(by="timestamp_created", inplace=True)
+    st.dataframe(response[["symbol", "type", "outputs", "model_name", "model_version", "timestamp_created", "id"]].iloc[::-1].head(4))
 except:
     st.error("No response data yet, wait for prediction")
 
@@ -42,8 +43,9 @@ st.markdown("## Ground Truth")
 st.markdown("New event of actual Data added every 5 min to evaluate performance in realtime")
 try:
     ground_truth = df[df["type"] == "ground_truth"]
-    ground_truth = ground_truth.drop(["timestamp_created", "model_name", "model_version", "id", "parameters", "outputs"],axis=1)
-    st.dataframe(ground_truth[ground_truth["symbol"] == 'BTC/USD'].head(4))
+    ground_truth.sort_values(by="timestamp_created", inplace=True)
+    ground_truth = ground_truth.drop(["timestamp_created", "open", "high", "low", "model_name", "model_version", "id", "parameters", "outputs"],axis=1)
+    st.dataframe(ground_truth[ground_truth["symbol"] == 'BTC/USD'].iloc[::-1].head(4))
 except:
     st.error("No ground truth data yet")
 
