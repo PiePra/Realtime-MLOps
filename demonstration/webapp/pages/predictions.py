@@ -14,7 +14,6 @@ def run_command(args):
     return result.stdout
 
 st.markdown("# Predictions")
-st.markdown("We demonstrate online Inference on a Kafka Topic. Features are loaded using the online Store")
 st.sidebar.markdown("# Predictions")
 
 events = run_command("/usr/bin/kafkacat -b streaming-system-kafka-0.kafka.svc.cluster.local:9094 -t knative-broker-default-crypto-prediction -C -e"
