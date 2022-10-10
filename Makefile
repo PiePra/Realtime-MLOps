@@ -44,9 +44,9 @@ streaming-system:
 	kubectl wait pods -n kafka -l strimzi.io/name=streaming-system-kafka --for condition=Ready --timeout=180s
 	sleep 5s
 	kubectl wait deployment -n kafka streaming-system-entity-operator --for condition=Available=True --timeout=180s
-	kubectl apply -f demonstration/data-service/deployment
+	kubectl apply -f demonstration/stream-processing/data-service/deployment
 	kubectl wait deployment data-service --for condition=Available=True --timeout=180s
-	kubectl apply -f demonstration/data-pipeline/deployment
+	kubectl apply -f demonstration/stream-processing/data-pipeline/deployment
 
 training:
 	echo "---- Installing Training Components ----" 
@@ -80,6 +80,3 @@ webapp:
 	
 install:
 	make cluster connect feature-store streaming-system training inference online-learning webapp
-
-
-
