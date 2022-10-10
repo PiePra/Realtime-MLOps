@@ -31,7 +31,7 @@ feature-store:
 	echo "---- Loading Data into offline Store ----" 
 	python scripts/fill_offlinestore.py
 	echo "---- Creating Feature Store tables ----" 
-	(cd demonstration/feature_store/feature_repo ;feast apply)
+	(cd platform/feast/feature_store/feature_repo ;feast apply)
 	kubectl rollout restart deployment/feature-store-feast-feature-server -n feast
 
 
@@ -61,18 +61,25 @@ inference:
 	echo "---- Installing Inference Components ----" 
 	kubectl kustomize platform/inference/ | kubectl create -f -
 	kubectl wait deployment -n kserve kserve-controller-manager --for condition=Available=True --timeout=300s
-	kubectl apply -f demonstration/feast-kserve-transform/deployment
+	kubectl apply -f demonstration/online-inference/deployment
 	sleep 5
 	kubectl apply -f demonstration/realtime-monitoring/deployment
 	sleep 5
 	kubectl wait deployment bitcoin-forecast-predictor-default-00001-deployment --for condition=Available=True --timeout=600s
+
+online-learning:
+	echo "---- Installing ML Pipeline Components ----" 
+	kubectl apply -f demonstration/online-learning/trigger/deployment
+	kubectl apply -f demonstration/online-learning/tasks
+	kubectl apply -f demonstration/online-learning/pipelines
+	kubectl apply -f demonstration/online-learning/eventlistener
 	
 
 webapp:
 	python -m streamlit run demonstration/webapp/bitcoin.py
 	
 install:
-	make cluster connect feature-store streaming-system training inference
+	make cluster connect feature-store streaming-system training inference online-learning webapp
 
 
 
