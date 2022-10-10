@@ -58,7 +58,7 @@ try:
     col3.metric("MAE", now["MAE"], res["MAE"], delta_color="inverse")
     col4.metric("R²",  now["R2"], res["R2"], delta_color="normal" if now["R2"]<0 else "inverse")
     metrics["timestamp"] = metrics["timestamp"].astype('datetime64[s]')
-    st.dataframe(metrics.iloc[::-1].head(6))
+    st.dataframe(metrics.iloc[::-1])
 except:
     st.error("No metrics data available yet")
 

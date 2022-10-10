@@ -21,9 +21,9 @@ spec:
                 - name: mlflow_tracking_uri
                   value: http://mlflow.mlflow.svc.cluster.local
                 - name: mlflow_model_name
-                  value: BitcoinForecast
+                  value: BitcoinForecast-xgb
                 - name: mlflow_experiment_name
-                  value: bitcoin
+                  value: bitcoin-xgb
                 - name: entity_name
                   value: symbol
                 - name: entity_ids
