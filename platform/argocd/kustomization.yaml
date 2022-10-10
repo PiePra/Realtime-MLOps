@@ -1,4 +1,0 @@
-resources:
-- namespace.yaml
-- argocd-operator.yaml
-namespace: argocd

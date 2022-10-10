@@ -1,0 +1,45 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: set-model-revision
+  labels:
+    app.kubernetes.io/version: "0.6"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.17.0"
+    tekton.dev/categories: Image Build
+    tekton.dev/tags: image-build
+    tekton.dev/displayName: "Get historical feature values from offline store"
+    tekton.dev/platforms: "linux/amd64"
+spec:
+  description: >-
+    This Task updates an inference service to a specific model revision.
+  params:
+    - name: service_name
+      description: Name of the inferenceservice.
+    - name: service_namespace
+      description: Namespace of the inferenceservice.
+      default: default
+    - name: storage_uri
+      description: S3 location of the model revision.
+  steps:
+    - name: query-and-write
+      image: python:3.8
+      script: | 
+        #!/usr/bin/env bash
+        pip install kubernetes
+        pyscript=$(cat <<'EOF'
+        from kubernetes import client, config, watch
+
+        config.load_incluster_config()
+        v1 = client.CustomObjectsApi()
+        storage_uri = "$(params.storage_uri)"
+        model_name = "$(params.service_name)"
+        namespace = "$(params.service_namespace)"
+        body = {"spec": {"predictor": {"model": {"storageUri": storage_uri}}}}
+        if storage_uri is not "" and model_name is not "" and namespace is not "":
+            v1.patch_namespaced_custom_object("serving.kserve.io", "v1beta1", namespace, "inferenceservices", model_name, body=body)
+        else: 
+            raise ValueError('Params storage_uri, service_name, service_namespace not set.') 
+        EOF
+        )
+        python -c "$pyscript"

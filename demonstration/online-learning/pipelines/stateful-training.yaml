@@ -1,0 +1,79 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: stateful-training
+spec:
+  description: | 
+    This pipeline gathers model information, laods relevant data from offline store and
+    increments a model by stateful retraining.
+  params:
+  - name: mlflow_model_name
+    type: string
+  - name: mlflow_tracking_uri
+    type: string
+  - name: mlflow_experiment_name
+    type: string
+  - name: entity_name
+    type: string
+  - name: entity_ids
+    type: string
+  - name: service_name
+    type: string
+  workspaces:
+  - name: shared-workspace
+  - name: feature-store
+  tasks:
+  - name: gather-model-info
+    taskRef:
+      name: get-model-info
+    workspaces:
+    - name: shared-workspace
+      workspace: shared-workspace
+    params:
+    - name: mlflow_tracking_uri
+      value: $(params.mlflow_tracking_uri)
+    - name: mlflow_model_name
+      value: $(params.mlflow_model_name)
+  - name: load-historical-features
+    runAfter: ["gather-model-info"]
+    taskRef:
+      name: get-historical-features
+    workspaces:
+    - name: shared-workspace
+      workspace: shared-workspace
+    - name: feature-store
+      workspace: feature-store
+    params:
+    - name: feature_service
+      value: "$(tasks.gather-model-info.results.feature-service)"
+    - name: features_from
+      value: "$(tasks.gather-model-info.results.features-to)"
+    - name: entity_name
+      value: $(params.entity_name)
+    - name: entity_ids
+      value: $(params.entity_ids)
+  - name: fit-model-incremental
+    runAfter: ["load-historical-features"]
+    taskRef:
+      name: fit-model-incremental
+    workspaces:
+    - name: shared-workspace
+      workspace: shared-workspace
+    params:
+    - name: mlflow_tracking_uri
+      value: $(params.mlflow_tracking_uri)
+    - name: mlflow_model_name
+      value: $(params.mlflow_model_name)
+    - name: mlflow_experiment_name
+      value: $(params.mlflow_experiment_name)
+    - name: random_state
+      value: "$(tasks.gather-model-info.results.random-state)"
+  - name: update-model-revision
+    runAfter: ["fit-model-incremental"]
+    taskRef:
+      name: set-model-revision
+    params:
+    - name: service_name
+      value: $(params.service_name)
+    - name: storage_uri
+      value: $(tasks.fit-model-incremental.results.storage-uri)
