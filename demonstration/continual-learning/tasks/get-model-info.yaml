@@ -31,7 +31,7 @@ spec:
       description: The random seed
   steps:
     - name: query-mlflow
-      image: docker.io/piepra/ml-executor:1.5
+      image: docker.io/piepra/ml-executor:1.6
       script: | 
         #!/usr/bin/env bash
         pyscript=$(cat <<'EOF'        

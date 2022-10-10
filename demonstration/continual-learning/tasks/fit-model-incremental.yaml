@@ -31,18 +31,16 @@ spec:
       description: The uri of the stored model in s3.
   steps:
     - name: load-and-fit
-      image: docker.io/piepra/ml-executor:1.5
+      image: docker.io/piepra/ml-executor:1.6
       script: | 
         #!/usr/bin/env bash
-        pip install protobuf==3.20.* boto3
-        echo "test"
         pyscript=$(cat <<'EOF'   
         from sklearn.model_selection import train_test_split
         import numpy as np
         import pandas as pd
         import mlflow
         from mlflow.models.signature import infer_signature
-        from xgboost import XGBClassifier
+        from xgboost import XGBRegressor
         import pickle
         import os
         import argparse
@@ -83,7 +81,7 @@ spec:
 
         with mlflow.start_run():
             mlflow.xgboost.autolog()
-            model_new = XGBClassifier().fit(X, y, xgb_model=model)
+            model_new = XGBRegressor().fit(X, y, xgb_model=model)
             mlflow.log_param("data_from", first)
             mlflow.log_param("data_to", last)
             mlflow.log_param("feature_view", "crypto_stats")

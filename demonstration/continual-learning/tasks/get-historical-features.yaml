@@ -37,7 +37,7 @@ spec:
       description: this workspace contains the feature_store.yaml.
   steps:
     - name: query-and-write
-      image: docker.io/piepra/ml-executor:1.5
+      image: docker.io/piepra/ml-executor:1.6
       script: | 
         #!/usr/bin/env bash
         pyscript=$(cat <<'EOF'
