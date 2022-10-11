@@ -1,6 +1,6 @@
 env:
 	echo "---- Creating Conda Env ----" 
-	conda env create -f platform/infra/kind/environment.yaml
+	conda env create -f platform/infra/conda/environment.yaml
 
 delete-env:
 	echo "---- Deleting Conda Env ----" 
