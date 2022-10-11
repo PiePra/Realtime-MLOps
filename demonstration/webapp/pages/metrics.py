@@ -5,6 +5,7 @@ from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error, 
 from cloudevents.http import CloudEvent, to_structured
 import requests
 from datetime import datetime
+import plotly.express as px
 
 def metrics_dict(y, y_hat):
     metrics = {
@@ -59,9 +60,10 @@ try:
     col4.metric("R²",  now["R2"], res["R2"], delta_color="normal" if now["R2"]<0 else "inverse")
     metrics["timestamp"] = metrics["timestamp"].astype('datetime64[s]')
     st.dataframe(metrics.iloc[::-1])
+    
 except:
     st.error("No metrics data available yet")
-
+st.plotly_chart(px.line(metrics.iloc[-40:], x="timestamp", y="diff", title='Diff over time') )
 # st.markdown("## Model retraining")
 # col1, col2 = st.columns(2)
 # with col1:

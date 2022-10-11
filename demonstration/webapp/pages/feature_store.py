@@ -14,18 +14,12 @@ features=[
     "crypto_stats:high",
     "crypto_stats:low",
     "crypto_stats:close",
-    "technical_indicators:ema_9",
-    "technical_indicators:sma_5",
-    "technical_indicators:sma_20",
-    "technical_indicators:macd",
-    "technical_indicators:rsi", 
-    "technical_indicators:stochastic",
 ]
 
 st.markdown("Values in feature store as of " + datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"))
 
 headers = {"Content-type": "application/json", "Accept": "application/json"}
-params = {'features': features, 'entities': {"symbol": ["BTC/USD"]},
+params = {'features': features, 'entities': {"symbol": ["BTC/USD", "ETH/USD"]},
             'full_feature_names': False}
 json_params = json.dumps(params)
 
@@ -37,18 +31,11 @@ open= r["results"][1]["values"]
 low= r["results"][2]["values"]
 close= r["results"][3]["values"]
 high = r["results"][4]["values"]
-ema_9 = r["results"][5]["values"]
-sma_5 = r["results"][6]["values"]
-sma_20 = r["results"][7]["values"]
-macd = r["results"][8]["values"]
-rsi = r["results"][9]["values"]
-stochastic = r["results"][10]["values"]
-
 
 columns = r["metadata"]["feature_names"]
 st.markdown("## Online Store")
 st.markdown("Currently served feature values")
-online = pd.DataFrame(list(zip(symbol, open, low, close, high, ema_9, sma_5, sma_20, macd, rsi, stochastic)), columns=columns)
+online = pd.DataFrame(list(zip(symbol, open, low, close, high)), columns=columns)
 st.dataframe(online)
 
 st.markdown("## Offline Store")

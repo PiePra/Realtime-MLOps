@@ -9,10 +9,11 @@ dependencies:
     - feast[redis] 
     - feast[postgres]
     - boto3
-    - tensorflow
     - mlflow
     - sklearn
     - matplotlib
     - streamlit
     - bytewax
     - plotly
+    - xgboost
+    - ta
