@@ -69,10 +69,10 @@ inference:
 
 online-learning:
 	echo "---- Installing ML Pipeline Components ----" 
-	kubectl apply -f demonstration/online-learning/trigger/deployment
-	kubectl apply -f demonstration/online-learning/tasks
-	kubectl apply -f demonstration/online-learning/pipelines
-	kubectl apply -f demonstration/online-learning/eventlistener
+	kubectl apply -f demonstration/continual-learning/trigger/deployment
+	kubectl apply -f demonstration/continual-learning/tasks
+	kubectl apply -f demonstration/continual-learning/pipelines
+	kubectl apply -f demonstration/continual-learning/eventlistener
 	
 
 webapp:

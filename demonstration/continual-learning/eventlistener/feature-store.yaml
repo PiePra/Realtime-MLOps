@@ -1,0 +1,32 @@
+apiVersion: v1
+data:
+  feature_store.yaml: |-
+    project: feature_store
+    # By default, the registry is a file (but can be turned into a more scalable SQL-backed registry)
+    # The provider primarily specifies default offline / online stores & storing the registry in a given cloud
+    registry:
+        registry_store_type: PostgreSQLRegistryStore
+        path: feast_registry
+        host: offline-store-postgresql.feast.svc.cluster.local
+        port: 5432
+        database: feast
+        db_schema: public
+        user: feast
+        password: feast
+    provider: local
+    online_store:
+        type: redis
+        connection_string: online-store-redis-master.feast.svc.cluster.local:6379
+    offline_store:
+        type: postgres
+        host: offline-store-postgresql.feast.svc.cluster.local
+        port: 5432
+        database: feast
+        db_schema: public
+        user: feast
+        password: feast
+    entity_key_serialization_version: 2
+kind: ConfigMap
+metadata:
+  name: feature-store
+  namespace: default

@@ -3,4 +3,3 @@ resources:
 - tekton-ui.yaml
 - tekton-trigger.yaml
 - tekton-interceptors.yaml
-- rbac.yaml

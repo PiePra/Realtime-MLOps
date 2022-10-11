@@ -1,19 +1,20 @@
 from datetime import timedelta
 
 from feast import (
-    KafkaSource, 
-    stream_feature_view,
     Entity,
     FeatureService,
     FeatureView,
     Field,
     PushSource,
 )
-from feast.data_format import JsonFormat
-from feast.types import Float32
+
+from feast.types import Float32, Float64
 from feast.infra.offline_stores.contrib.postgres_offline_store.postgres_source import (
     PostgreSQLSource,
 )
+from feast.on_demand_feature_view import on_demand_feature_view
+from ta.momentum import RSIIndicator,StochasticOscillator
+import pandas as pd
 
 # Define an entity for the driver. You can think of an entity as a primary key used to
 # fetch features.
@@ -65,3 +66,26 @@ crypto_push_source = PushSource(
     name="crypto_push_source",
     batch_source=crypto_source,
 )
+
+
+@on_demand_feature_view(sources=[crypto_fv],
+    schema=[
+        Field(name='ema_9', dtype=Float64),
+        Field(name='sma_5', dtype=Float64),
+        Field(name='sma_20', dtype=Float64),
+        Field(name='macd', dtype=Float64),
+        Field(name='rsi', dtype=Float64),
+        Field(name='stochastic', dtype=Float64),
+   ],
+)
+def technical_indicators(features_df: pd.DataFrame) -> pd.DataFrame:
+    df = pd.DataFrame()
+    df['ema_9'] = features_df['close'].ewm(9).mean() # exponential moving average of window 9
+    df['sma_5'] = features_df['close'].rolling(5).mean() # moving average of window 5
+    df['sma_20'] = features_df['close'].rolling(20).mean() # moving average of window 20
+    EMA_12 = pd.Series(features_df['close'].ewm(span=12, min_periods=12).mean())
+    EMA_26 = pd.Series(features_df['close'].ewm(span=26, min_periods=26).mean())
+    df['macd'] = pd.Series(EMA_12 - EMA_26)    # calculates Moving Average Convergence Divergence
+    df['rsi'] = RSIIndicator(features_df['close']).rsi() # calculates Relative Strength Index 
+    df['stochastic']=StochasticOscillator(features_df['high'],features_df['low'],features_df['close']).stoch()
+    return df

@@ -40,6 +40,7 @@ spec:
       image: docker.io/piepra/ml-executor:1.6
       script: | 
         #!/usr/bin/env bash
+        pip install ta
         pyscript=$(cat <<'EOF'
         import argparse
         from feast import FeatureStore

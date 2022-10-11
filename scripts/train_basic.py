@@ -42,6 +42,9 @@ train_size = 0.8
 X = df[['open_btc', 'high_btc', 'low_btc', 'close_btc', 'open_eth', 'high_eth', 'low_eth', 'close_eth']]
 y = df['y']
 X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=train_size, random_state=random_state)
+X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, train_size=train_size, random_state=random_state) 
+
+eval_set = [(X_train, y_train), (X_val, y_val)]
 
 #set mlflow parameters
 os.environ["AWS_ACCESS_KEY_ID"] = "mlflow"
@@ -134,6 +137,6 @@ spec:
       - v2
 """
 
-with open('demonstration/feast-kserve-transform/deployment/isvc.yaml', 'w+') as f:
+with open('demonstration/online-inference/deployment/isvc.yaml', 'w+') as f:
     f.writelines(template)
-    logging.info("wrote to demonstration/feast-kserve-transform/deployment/isvc.yaml")
+    logging.info("wrote to demonstration/online-inference/deployment/isvc.yaml")
