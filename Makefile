@@ -24,14 +24,14 @@ connect:
 
 feature-store:
 	echo "---- Installing Feature Store ----" 
-	kubectl kustomize --enable-helm platform/feast/ | kubectl apply -n feast -f -
+	kubectl kustomize --enable-helm platform/feature-store/ | kubectl apply -n feast -f -
 	kubectl rollout status -n feast --watch --timeout=180s statefulsets/online-store-redis-master
 	kubectl rollout status -n feast --watch --timeout=180s statefulsets/offline-store-postgresql
 	kubectl wait deployment -n feast feature-store-feast-feature-server --for condition=Available=True --timeout=180s
 	echo "---- Loading Data into offline Store ----" 
 	python scripts/fill_offlinestore.py
 	echo "---- Creating Feature Store tables ----" 
-	(cd platform/feast/feature_store/feature_repo ;feast apply)
+	(cd platform/feature-store/feature_store/feature_repo ;feast apply)
 	kubectl rollout restart deployment/feature-store-feast-feature-server -n feast
 
 
