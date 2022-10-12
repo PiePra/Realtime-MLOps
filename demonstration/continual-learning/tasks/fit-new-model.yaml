@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: fit-model-incremental
+  name: fit-model-stateless
   labels:
     app.kubernetes.io/version: "0.6"
   annotations:
@@ -12,8 +12,7 @@ metadata:
     tekton.dev/platforms: "linux/amd64"
 spec:
   description: >-
-    This Task loads the most recent model on MLFlow.
-    This Task fits the model on recent data.
+    This Task fits a fresh xgb model on input data.
   params:
     - name: mlflow_model_name
       description: Name of MLFlow model to load.
@@ -21,8 +20,6 @@ spec:
       description: Reachable MLFlow Endpoint.
     - name: mlflow_experiment_name
       description: Name of MLFlow experiment.
-    - name: random_state
-      description: The random seed.
   workspaces:
     - name: shared-workspace
       description: This workspace contains model parameters from MLFlow.
@@ -36,16 +33,19 @@ spec:
         #!/usr/bin/env bash
         pip install matplotlib
         pyscript=$(cat <<'EOF'   
-        from sklearn.model_selection import train_test_split
+        import pickle
+        import os
+        import argparse
+        import logging
         import numpy as np
         import pandas as pd
         import mlflow
         from mlflow.models.signature import infer_signature
         from xgboost import XGBRegressor
-        import pickle
-        import os
-        import argparse
-        import logging
+        from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+        from sklearn.model_selection import GridSearchCV
+        from mlflow.models.signature import infer_signature
+        from sklearn.model_selection import train_test_split
 
         parser = argparse.ArgumentParser(description='Load and Fit Model.')
         parser.add_argument('--mlflow_experiment_name', help='The name of the MLFlow experiment.', type=str, required = True)
@@ -61,20 +61,6 @@ spec:
 
         mlflow.set_tracking_uri(args.mlflow_tracking_uri)
         mlflow.set_experiment(args.mlflow_experiment_name)
-
-        with open(args.destination + '/run', 'rb') as f:
-            run = pickle.load(f)
-        with open(args.destination + '/model', 'rb') as f:
-            model = pickle.load(f)
-        version = model.latest_versions[-1]
-
-        model = mlflow.xgboost.load_model(
-            model_uri=f"models:/{version.name}/{version.version}"
-        )
-
-        logging.info(f"Loaded model version from models:/{version.name}/{version.version}")
-
-        
         df = pd.read_csv(args.destination + "/features.csv", index_col="event_timestamp")
         df.index = pd.to_datetime(df.index)
         first = df.index[0].timestamp()
@@ -84,21 +70,54 @@ spec:
         X = df[keys]
         y = df["y"]
 
+        random_state=int(args.random_state)
+        train_size = 0.9
+        X = df[['open_btc', 'high_btc', 'low_btc', 'close_btc', 'open_eth', 'high_eth', 'low_eth', 'close_eth']]
+        y = df['y']
+
+        X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=train_size, random_state=random_state)
+
+        def eval_metrics(actual, pred):
+            rmse = np.sqrt(mean_squared_error(actual, pred))
+            mae = mean_absolute_error(actual, pred)
+            r2 = r2_score(actual, pred)
+            return rmse, mae, r2
+
+        parameters = {
+            'n_estimators': [600, 800, 1000],
+            'learning_rate': [0.01, 0.2],
+            'max_depth': [2, 3, 4],
+            'gamma': [0.0001, 0.001],
+            'random_state': [42]
+        }
+        model = XGBRegressor(objective='reg:squarederror')
+        clf = GridSearchCV(model, parameters, n_jobs=-1)
+        clf.fit(X_train, y_train)
+
+
         with mlflow.start_run():
             mlflow.xgboost.autolog()
-            model_new = XGBRegressor().fit(X, y, xgb_model=model)
+            model = XGBRegressor(**clf.best_params_, objective='reg:squarederror')
+            model.fit(X_train, y_train, verbose=False)
+            logging.warning(clf.best_params_)
+            # Evaluate the best model with testing data.
+            y_hat = model.predict(X_test)
+            (rmse, mae, r2) = eval_metrics(y_test, y_hat)
             mlflow.log_param("data_from", first)
             mlflow.log_param("data_to", last)
             mlflow.log_param("feature_view", "crypto_stats")
             mlflow.log_param("framework", "xgboost")
-            model_signature = infer_signature(X, y)
-            info = mlflow.xgboost.log_model(model_new, "model", registered_model_name="BitcoinForecast", signature=model_signature)
+            mlflow.log_param("random_state", random_state)
+            mlflow.log_param("num_items", len(df))
+            mlflow.log_metric("rmse", rmse)
+            mlflow.log_metric("r2", r2)
+            mlflow.log_metric("mae", mae)
+            model_signature = infer_signature(X_train, y_train)
+            info = mlflow.xgboost.log_model(model, "model", registered_model_name="BitcoinForecast", signature=model_signature)
             uri = mlflow.get_artifact_uri()
             storage_uri = f"{uri}/model"
-        with open("$(results.storage-uri.path)", 'a') as f: f.write(storage_uri)
+            with open("$(results.storage-uri.path)", 'a') as f: f.write(storage_uri)
         EOF
         )
         python -c "$pyscript" --mlflow_tracking_uri $(params.mlflow_tracking_uri) --mlflow_model_name $(params.mlflow_model_name) \
-        --mlflow_experiment_name $(params.mlflow_experiment_name) --random_state $(params.random_state) --destination $(workspaces.shared-workspace.path)
-
-  
+        --mlflow_experiment_name $(params.mlflow_experiment_name) --destination $(workspaces.shared-workspace.path)

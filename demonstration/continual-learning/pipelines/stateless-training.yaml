@@ -1,0 +1,65 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: stateless-training
+spec:
+  description: | 
+    This pipeline gathers model information, laods relevant data from offline store and
+    increments a model by stateful retraining.
+  params:
+  - name: mlflow_model_name
+    type: string
+  - name: mlflow_tracking_uri
+    type: string
+  - name: mlflow_experiment_name
+    type: string
+  - name: entity_name
+    type: string
+  - name: entity_ids
+    type: string
+  - name: service_name
+    type: string
+  - name: feature_service
+    type: string
+  workspaces:
+  - name: shared-workspace
+  - name: feature-store
+  tasks:
+  - name: load-historical-features
+    taskRef:
+      name: get-historical-features
+    workspaces:
+    - name: shared-workspace
+      workspace: shared-workspace
+    - name: feature-store
+      workspace: feature-store
+    params:
+    - name: feature_service
+      value: $(params.feature_service)
+    - name: entity_name
+      value: $(params.entity_name)
+    - name: entity_ids
+      value: $(params.entity_ids)
+  - name: fit-model-stateless
+    runAfter: ["load-historical-features"]
+    taskRef:
+      name: fit-model-stateless
+    workspaces:
+    - name: shared-workspace
+      workspace: shared-workspace
+    params:
+    - name: mlflow_tracking_uri
+      value: $(params.mlflow_tracking_uri)
+    - name: mlflow_model_name
+      value: $(params.mlflow_model_name)
+    - name: mlflow_experiment_name
+      value: $(params.mlflow_experiment_name)
+  - name: update-model-revision
+    runAfter: ["fit-model-stateless"]
+    taskRef:
+      name: set-model-revision
+    params:
+    - name: service_name
+      value: $(params.service_name)
+    - name: storage_uri
+      value: $(tasks.fit-model-stateless.results.storage-uri)

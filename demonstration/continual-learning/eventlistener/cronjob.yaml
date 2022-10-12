@@ -1,0 +1,17 @@
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: trigger-stateless-fit
+  namespace: default
+spec:
+  schedule: "0 8,20 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: trigger-stateless-fit
+            image: curlimages/curl
+            args: ["curl", "-X", "POST", "--data", "{}", "el-stateless-fit.default.svc.cluster.local:8080"]
+          restartPolicy: Never

@@ -1,0 +1,46 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: staless-fit
+  namespace: default
+spec:
+  serviceAccountName: tekton-triggers
+  triggers:
+    - name: stateless-fit
+      template:
+        spec: 
+          resourceTemplates:
+          - apiVersion: "tekton.dev/v1beta1"
+            kind: PipelineRun
+            metadata:
+              generateName: stateless-training-
+            spec:
+              pipelineRef:
+                name: stateless-training
+              params:
+                - name: mlflow_tracking_uri
+                  value: http://mlflow.mlflow.svc.cluster.local
+                - name: mlflow_model_name
+                  value: BitcoinForecast
+                - name: mlflow_experiment_name
+                  value: bitcoin-xgb-stateless
+                - name: entity_name
+                  value: symbol
+                - name: entity_ids
+                  value: "BTC/USD ETH/USD"
+                - name: service_name
+                  value: bitcoin-forecast
+                - name: feature_service
+                  value: crypto_stats
+              workspaces:               
+                - name: feature-store
+                  configmap:
+                    name: feature-store
+                - name: shared-workspace
+                  volumeClaimTemplate:
+                    spec:
+                      accessModes:
+                      - ReadWriteOnce
+                      resources:
+                        requests:
+                          storage: 4Gi

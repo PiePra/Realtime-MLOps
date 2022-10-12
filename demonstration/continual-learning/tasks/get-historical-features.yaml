@@ -24,6 +24,7 @@ spec:
       description: Space separated string of entity ids.
     - name: features_from
       description: Get features since this time.
+      default: ""
     - name: features_to
       description: Get features up to this time.
       default: ""
@@ -44,7 +45,7 @@ spec:
         pyscript=$(cat <<'EOF'
         import argparse
         from feast import FeatureStore
-        from datetime import datetime
+        from datetime import datetime, timedelta
         import pandas as pd
         import logging
 
@@ -53,7 +54,6 @@ spec:
         parser.add_argument('--feature_service', help='The name of the feature service.', type=str, required = True)
         parser.add_argument('--entity_name', help='Name of the entity.', type=str, required = True)
         parser.add_argument('--entity_ids', help='List of entity ids', type=str, nargs="+", required = True)
-        parser.add_argument('--from_time', help='Name of the entity.', type=float, required = True)
         parser.add_argument('--to_time', help='Get features since this time.', type=float, default=datetime.utcnow().timestamp())
         parser.add_argument('--frequency', help=' The frequency interval.', type=str, default = "5min")
         parser.add_argument('--destination', help='The csv file destination', type=str, default = "./")
@@ -62,9 +62,13 @@ spec:
         FEATURE_SERVICE = args.feature_service
         ENTITY = args.entity_name
         ENTITY_IDs = args.entity_ids
-        FROM = args.from_time
+        FROM = "$(params.features_from)"
         TO = args.to_time
         FREQUENCY= args.frequency
+        try:
+            FROM = float(FROM)
+        except ValueError:
+            FROM = (datetime.utcnow() - timedelta(minutes = 150 * 5)).timestamp()
 
         entity_dfs = []
         for entity_id in ENTITY_IDs:
@@ -94,12 +98,13 @@ spec:
         first = df.index[0].timestamp()
         last = df.index[-1].timestamp()
 
-        logging.info(df.shape)
-        logging.info(df.head())
+        logging.warning(df.shape)
+        logging.warning(df.head())
+        logging.warning(df.columns)
         keys = [x for x in df.columns if "symbol" not in x and "timestamp" not in x]
         df = df[keys].drop_duplicates()
         df.to_csv(args.destination + '/' + 'features.csv')
         EOF
         )
         python -c "$pyscript" --feature_service $(params.feature_service) --entity_name $(params.entity_name)  --entity_ids $(params.entity_ids) \
-        --from_time $(params.features_from) --feature_store $(workspaces.feature-store.path) --destination $(workspaces.shared-workspace.path)
+         --feature_store $(workspaces.feature-store.path) --destination $(workspaces.shared-workspace.path)
