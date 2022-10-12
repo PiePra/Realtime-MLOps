@@ -33,7 +33,7 @@ btc.sort_values(by="timestamp", inplace=True)
 
 st.plotly_chart(px.line(btc.iloc[-20:], x="timestamp", y="price", title='Price BTC/USD 1 min') )
 st.markdown("# Stream aggregation")
-st.markdown("We aggregate windows of 5 minutes to get open, high, low, close data for that window")
+st.markdown("Windows of 5 minutes are aggregated to get open, high, low, close data every 5 minutes")
 col1, col2 = st.columns(2)
 with col1:
     st.dataframe(btc.iloc[::-1][:10])

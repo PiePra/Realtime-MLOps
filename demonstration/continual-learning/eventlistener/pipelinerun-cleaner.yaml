@@ -84,10 +84,3 @@ spec:
                           || echo "$(date -Is) Unable to delete PipelineRun ${PIPELINE_TO_REMOVE}.";
                     done < <(kubectl get pipelinerun -l tekton.dev/pipeline=${PIPELINE} --sort-by=.metadata.creationTimestamp -o name | head -n -${NUM_TO_KEEP});
                   done < <(kubectl get pipelinerun -o go-template='{{range .items}}{{index .metadata.labels "tekton.dev/pipeline"}}{{"\n"}}{{end}}' | uniq);
-              resources:
-                requests:
-                  cpu: 50m
-                  memory: 32Mi
-                limits:
-                  cpu: 100m
-                  memory: 64Mi
