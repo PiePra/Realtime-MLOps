@@ -29,8 +29,6 @@ def get_metric(session):
             if line["type"] == "response":
                 y_hat = line["outputs"][0]["data"][0]
                 diff = y - y_hat
-                if diff < 0:
-                    diff = diff * -1
                 temp = {"type": "eval",
                 "symbol": symbol,
                 "y": y,

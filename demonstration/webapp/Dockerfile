@@ -8,8 +8,8 @@ RUN apt-get update && apt-get install -y \
     git \
     kafkacat \
     && rm -rf /var/lib/apt/lists/*
-RUN pip install streamlit cloudevents requests altair pandas
+RUN pip install streamlit cloudevents requests altair pandas sqlalchemy plotly sklearn psycopg2-binary
 
 COPY . .
 
-ENTRYPOINT ["streamlit", "run", "webapp.py", "--server.port=80", "--server.address=0.0.0.0"]
+ENTRYPOINT ["streamlit", "run", "aggregation.py", "--server.port=80", "--server.address=0.0.0.0"]

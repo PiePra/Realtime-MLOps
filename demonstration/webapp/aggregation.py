@@ -5,8 +5,8 @@ import subprocess
 import plotly.express as px
 from sqlalchemy import create_engine
 
-st.markdown("# Bitcoin")
-st.sidebar.markdown("# Bitcoin")
+st.markdown("# Stream Aggregation")
+st.sidebar.markdown("# Stream Aggregation")
 
 
 def run_command(args):

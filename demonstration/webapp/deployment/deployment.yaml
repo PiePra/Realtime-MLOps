@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+  labels:
+    run: webapp
+  name: webapp
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: webapp
+  template:
+    metadata:
+      labels:
+        run: webapp
+    spec:
+      containers:
+      - image: docker.io/piepra/webapp:1.0
+        imagePullPolicy: Always
+        name: webapp
+        ports:
+        - containerPort: 5000
+          protocol: TCP

@@ -1,7 +1,7 @@
 apiVersion: triggers.tekton.dev/v1alpha1
 kind: EventListener
 metadata:
-  name: staless-fit
+  name: stateless-fit
   namespace: default
 spec:
   serviceAccountName: tekton-triggers
