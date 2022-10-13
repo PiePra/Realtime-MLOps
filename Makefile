@@ -74,9 +74,5 @@ online-learning:
 	kubectl apply -f demonstration/continual-learning/pipelines
 	kubectl apply -f demonstration/continual-learning/eventlistener
 	
-
-webapp:
-	python -m streamlit run demonstration/webapp/bitcoin.py
-	
 install:
-	make cluster connect feature-store streaming-system training inference online-learning webapp
+	make cluster connect feature-store streaming-system training inference online-learning
