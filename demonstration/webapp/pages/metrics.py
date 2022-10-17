@@ -51,18 +51,25 @@ try:
     metrics["timestamp"] = metrics["timestamp"].astype('datetime64[s]')
     metrics["delta_y"] = metrics["y"] - metrics["y"].shift(1)
     metrics["delta_y_hat"] = metrics["y_hat"] - metrics["y"].shift(1)
-    trend_y = metrics["delta_y"].apply(lambda x: True if x > 0 else False )
-    trend_y_hat = metrics["delta_y_hat"].apply(lambda x: True if x > 0 else False )
-    metrics["accurate"] = trend_y & trend_y_hat
-    accuracy = metrics["accurate"].iloc[-10:].value_counts(True)[True]
-    accuracy_past = metrics["accurate"].iloc[-11:-1].value_counts(True)[True]
+    metrics["trend_y"] = metrics["delta_y"].apply(lambda x: True if x > 0 else False )
+    metrics["trend_y_hat"] = metrics["delta_y_hat"].apply(lambda x: True if x > 0 else False )
+    metrics["accurate"] = metrics["trend_y"] == metrics["trend_y_hat"]
+    try:
+        accuracy = metrics["accurate"].iloc[-10:].value_counts(True)[True]
+    except:
+        accuracy = 0
+    try:
+        accuracy_past = metrics["accurate"].iloc[-11:-1].value_counts(True)[True]
+    except:
+        accuracy_past = 0
     col1.metric("RMSE", now["RMSE"], res["RMSE"], delta_color="inverse")
     col2.metric("MAPE", str(now["MAPE"]) + "%" , str(res["MAPE"]) + "%", delta_color="inverse" )
     col3.metric("MAE", now["MAE"], res["MAE"], delta_color="inverse")
     col4.metric("R²",  now["R2"], res["R2"], delta_color="normal" if now["R2"]<0 else "inverse")
     col5.metric("Acc", str(accuracy * 100) + "%", str(round((accuracy - accuracy_past) * 100, 1)) + "%" )
     
-except:
+except Exception as e:
+    st.write(e)
     st.error("No metrics data available yet")
 
 st.plotly_chart(px.line(metrics.iloc[-40:], x="timestamp", y="diff", title='Diff over time') )
