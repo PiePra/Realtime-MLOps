@@ -1,7 +1,7 @@
 import json
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
-from typing import Tuple
+from typing import Tuple, List
 
 import pandas as pd
 import requests
@@ -49,26 +49,31 @@ class OHLC:
     low: float
     close: float
     timestamp_created: datetime
-    timestamp: datetime = field(default=datetime.utcnow().timestamp())
+    timestamp: datetime = field(default_factory=datetime.utcnow().timestamp)
 
+@dataclass
+class PriceMessage:
+    """Class representing a Price for given Time"""
+    price: float
+    timestamp: datetime
 
-def get_message(msg: Tuple[str, Tuple]) -> Tuple[str, Tuple]:
+def get_message(msg: Tuple[str, Tuple]) -> Tuple[str, PriceMessage]:
     """Formats msg to use symbol as key and content as tuple"""
     key, val = msg
     key = json.loads(val) 
     msg = key
-    yield msg["symbol"], (msg["price"], msg["timestamp"])  
+    yield msg["symbol"], PriceMessage(msg["price"], msg["timestamp"])  
 
-def append_price(prices: list, price: Tuple):
+def append_price(prices: List[Tuple[str, PriceMessage]], price: Tuple[str, PriceMessage]):
     """Appends price to list of prices"""
     prices.append(price)
     return prices
 
-def get_vals(msg: Tuple[str, Tuple]) -> list:
+def get_vals(msg: List[Tuple[str, PriceMessage]]) -> OHLC:
     """"Get OHLC Data from prices"""
-    key, msg = msg
-    prices = [item[0] for item in msg]
-    timestamps = [item[1] for item in msg]
+    key, price_message = msg
+    prices = [item.price for item in price_message]
+    timestamps = [item.timestamp for item in price_message]
 
     output = OHLC(
         symbol=key,
