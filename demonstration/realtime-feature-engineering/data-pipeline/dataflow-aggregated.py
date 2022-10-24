@@ -99,16 +99,16 @@ def get_cloudevent(data: OHLC) -> CloudEvent:
         "type": f"{CE_ATTR_TYPE}_",
         "source": CE_ATTR_SOURCE,
     }
-    event = data.__dict__
+    event = data.__dict__.copy()
     event["type"]="ground_truth"
     return CloudEvent(attributes, event)
 
 def get_df(data: OHLC) -> pd.DataFrame:
     """Create pandas dataframe to send to feast"""
-    item = data.__dict__
-    for key in item.keys():
-        item[key] = [item[key]]
-    df = pd.DataFrame(item)
+    data_dict = data.__dict__.copy()
+    for key in data_dict.keys():
+        data_dict[key] = [data_dict[key]]
+    df = pd.DataFrame(data_dict)
     df["timestamp"] = df["timestamp"].astype('datetime64[s]')
     df["timestamp_created"] = df["timestamp_created"].astype('datetime64[s]')
     return df
