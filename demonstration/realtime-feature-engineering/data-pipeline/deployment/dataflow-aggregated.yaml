@@ -1,45 +1,60 @@
 apiVersion: v1
 data:
-  dataflow-aggregated.py: "import json\nfrom datetime import datetime, timedelta\nimport
-    logging\nfrom bytewax.dataflow import Dataflow\nfrom bytewax.execution import
-    run_main\nfrom bytewax.inputs import KafkaInputConfig\nfrom bytewax.outputs import
-    ManualOutputConfig, StdOutputConfig\nfrom bytewax.window import SystemClockConfig,
-    TumblingWindowConfig, TestingClockConfig\nfrom cloudevents.http import CloudEvent\nfrom
-    cloudevents.conversion import to_structured\nimport requests\nimport pandas as
-    pd\nfrom sqlalchemy import create_engine\nfrom feast import FeatureStore\n\n\ndef
-    get_message(msg):\n    key, val = msg\n    key = json.loads(val) \n    msg = key\n
-    \   yield msg[\"symbol\"], (msg[\"price\"], msg[\"timestamp\"])  \n\ndef append_price(prices,
-    price):\n    prices.append(price)\n    return prices\n\ndef get_vals(msg):\n    key,
-    msg = msg\n    prices = [item[0] for item in msg]\n    timestamps = [item[1] for
-    item in msg]\n\n    output = {\n        \"symbol\": key,\n        \"low\": min(prices),\n
-    \       \"high\": max(prices),\n        \"open\": prices[0],\n        \"close\":
-    prices[-1],\n        \"timestamp\": datetime.utcnow().timestamp(),\n        \"timestamp_created\":
-    timestamps[-1]\n    }\n    return output\n\ndef output_builder(worker_index, worker_count):\n
-    \   engine = create_engine('postgresql://feast:feast@offline-store-postgresql.feast.svc.cluster.local:5432/feast')\n
-    \   store = FeatureStore('./feature-repo')\n    def write(item):\n        attributes
-    = {\n            \"type\": f\"cluster.local.aggregated_{item['symbol']}\",\n            \"source\":
-    \"https://cluster.local/dataflow\",\n        }\n        event = item.copy()\n
-    \       event[\"type\"] = \"ground_truth\"\n        event = CloudEvent(attributes,
-    event)\n        headers, body = to_structured(event)\n        for key in item.keys():\n
-    \           item[key] = [item[key]]\n        #r = requests.post(\"http://feast-feature-server.feast.svc.cluster.local:80/push\",
-    json=push_data)\n        #logging.info(f\"worker {worker_index} pushed to online
-    store - {item['timestamp_created']}\")\n        # We have to write directly to
-    postgres because write offline store not implemented for postgres yet\n        df
-    = pd.DataFrame(item)\n        df[\"timestamp\"] = df[\"timestamp\"].astype('datetime64[s]')\n
-    \       df[\"timestamp_created\"] = df[\"timestamp_created\"].astype('datetime64[s]')\n
-    \       # Write online store\n        store.write_to_online_store(\"crypto_stats\",
-    df, allow_registry_cache = True)\n        # Post Event\n        requests.post(\"http://kafka-broker-ingress.knative-eventing.svc.cluster.local/default/crypto-prediction\",
-    data=body, headers=headers)\n        # Write offline store\n        df.to_sql(\"crypto_source\",
-    engine, if_exists='append', index=False)\n    return write\n\n\nif __name__ ==
-    \"__main__\":\n    logging.basicConfig(level=logging.INFO)\n    cc = SystemClockConfig()\n
-    \   #cc = TestingClockConfig(start_at=datetime(2022, 1, 1, 13), item_incr = timedelta(minutes=1))\n
+  dataflow-aggregated.py: "import json\nfrom dataclasses import dataclass, field\nfrom
+    datetime import datetime, timedelta\nfrom typing import Tuple, List\n\nimport
+    pandas as pd\nimport requests\nimport sqlalchemy\nfrom bytewax.dataflow import
+    Dataflow\nfrom bytewax.execution import run_main\nfrom bytewax.inputs import KafkaInputConfig\nfrom
+    bytewax.outputs import ManualOutputConfig\nfrom bytewax.window import SystemClockConfig,
+    TumblingWindowConfig\nfrom cloudevents.conversion import to_structured\nfrom cloudevents.http
+    import CloudEvent\nfrom feast import FeatureStore\nfrom sqlalchemy import create_engine\n\n#Kafka
+    Input\nKAFKA_BOOTSTRAP_SERVERS=[\"streaming-system-kafka-0.kafka.svc.cluster.local:9094\"]\nKAFKA_TOPIC=\"knative-broker-default-crypto\"\n\n#Feast
+    Config\nFEAST_PATH=\"./feature-repo\"\nFEAST_FEATURE_VIEW=\"crypto_stats\"\nFEAST_SOURCE_TABLE=\"crypto_source\"\n\n#Feast
+    Offline Store\nDB_TYPE=\"postgresql\"\nPG_USER=\"feast\"\nPG_PASS=\"feast\"\nPG_HOST=\"offline-store-postgresql.feast.svc.cluster.local\"\nPG_PORT=\"5432\"\nPG_DB=\"feast\"\n\n#Output
+    Broker Ingress\nKAFKA_BROKER_INGRESS=\"http://kafka-broker-ingress.knative-eventing.svc.cluster.local/default/crypto-prediction\"\n\n#CloudEvent
+    Attributes\nCE_ATTR_TYPE=\"cluster.local.aggregated_\"\nCE_ATTR_SOURCE=\"https://cluster.local/dataflow\"\n\n@dataclass\nclass
+    OHLC:\n    \"\"\"Class representing output Feature Vector\"\"\"\n    symbol: str\n
+    \   open: float\n    high: float\n    low: float\n    close: float\n    timestamp_created:
+    datetime\n    timestamp: datetime = field(default_factory=datetime.utcnow().timestamp)\n\n@dataclass\nclass
+    PriceMessage:\n    \"\"\"Class representing a Price for given Time\"\"\"\n    price:
+    float\n    timestamp: datetime\n\ndef get_message(msg: Tuple[str, Tuple]) -> Tuple[str,
+    PriceMessage]:\n    \"\"\"Formats msg to use symbol as key and content as tuple\"\"\"\n
+    \   key, val = msg\n    key = json.loads(val) \n    msg = key\n    yield msg[\"symbol\"],
+    PriceMessage(msg[\"price\"], msg[\"timestamp\"])  \n\ndef append_price(prices:
+    List[Tuple[str, PriceMessage]], price: Tuple[str, PriceMessage]):\n    \"\"\"Appends
+    price to list of prices\"\"\"\n    prices.append(price)\n    return prices\n\ndef
+    get_vals(msg: List[Tuple[str, PriceMessage]]) -> OHLC:\n    \"\"\"\"Get OHLC Data
+    from prices\"\"\"\n    key, price_message = msg\n    prices = [item.price for
+    item in price_message]\n    timestamps = [item.timestamp for item in price_message]\n\n
+    \   output = OHLC(\n        symbol=key,\n        low=min(prices),\n        high=max(prices),\n
+    \       open=prices[0],\n        close=prices[-1],\n        timestamp_created=timestamps[-1]\n
+    \   )\n    return output\n\ndef get_engine() -> sqlalchemy.engine.Engine:\n    \"\"\"Create
+    DB Connection Engine\"\"\"\n    return create_engine(f\"{DB_TYPE}://{PG_USER}:{PG_PASS}@{PG_HOST}:{PG_PORT}/{PG_DB}\")\n\ndef
+    get_feature_store() -> FeatureStore:\n    \"\"\"Create Feature Store Object\"\"\"\n
+    \   return FeatureStore(FEAST_PATH)\n\ndef get_cloudevent(data: OHLC) -> CloudEvent:\n
+    \   \"\"\"Create the Cloudevent from attributes and data\"\"\"\n    attributes
+    = {\n        \"type\": f\"{CE_ATTR_TYPE}_\",\n        \"source\": CE_ATTR_SOURCE,\n
+    \   }\n    event = data.__dict__\n    event[\"type\"]=\"ground_truth\"\n    return
+    CloudEvent(attributes, event)\n\ndef get_df(data: OHLC) -> pd.DataFrame:\n    \"\"\"Create
+    pandas dataframe to send to feast\"\"\"\n    item = data.__dict__\n    for key
+    in item.keys():\n        item[key] = [item[key]]\n    df = pd.DataFrame(item)\n
+    \   df[\"timestamp\"] = df[\"timestamp\"].astype('datetime64[s]')\n    df[\"timestamp_created\"]
+    = df[\"timestamp_created\"].astype('datetime64[s]')\n    return df\n\ndef output_builder(worker_index:
+    int, worker_count: int) -> callable:\n    \"\"\"Build the function to write to
+    feast\"\"\"\n    engine = get_engine()\n    store = get_feature_store()\n    def
+    write(item: OHLC):\n        df = get_df(item)\n        # Write to online store\n
+    \       store.write_to_online_store(FEAST_FEATURE_VIEW, df)\n        # Post Event
+    to Broker Ingress\n        event = get_cloudevent(item)\n        headers, body
+    = to_structured(event)\n        requests.post(KAFKA_BROKER_INGRESS, data=body,
+    headers=headers)\n        # Write offline store (directly to sql table as write_to_offline_store
+    not implemented for postgresql yet)\n        df.to_sql(FEAST_SOURCE_TABLE, engine,
+    if_exists='append', index=False)\n    return write\n\ndef run_dataflow() -> None:\n
+    \   \"\"\"Main function to run the dataflow\"\"\"\n    cc = SystemClockConfig()\n
     \   wc = TumblingWindowConfig(length=timedelta(minutes=5))\n    input_config =
-    KafkaInputConfig([\"streaming-system-kafka-0.kafka.svc.cluster.local:9094\"],
-    \"knative-broker-default-crypto\", tail=True, starting_offset=\"end\")\n    flow
-    = Dataflow()\n    flow.input(\"input\", input_config)\n    flow.flat_map(get_message)\n
+    KafkaInputConfig(KAFKA_BOOTSTRAP_SERVERS, KAFKA_TOPIC, tail=True, starting_offset=\"end\")\n
+    \   flow = Dataflow()\n    flow.input(\"input\", input_config)\n    flow.flat_map(get_message)\n
     \   flow.fold_window(\"session_state_recovery\", cc, wc, list, append_price)\n
     \   flow.map(get_vals)\n    flow.capture(ManualOutputConfig(output_builder))\n
-    \   run_main(flow)"
+    \   run_main(flow)\n\nif __name__ == \"__main__\":\n    run_dataflow()\n"
 kind: ConfigMap
 metadata:
   annotations:
