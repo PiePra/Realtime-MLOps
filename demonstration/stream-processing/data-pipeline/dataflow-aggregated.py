@@ -21,7 +21,7 @@ KAFKA_BOOTSTRAP_SERVERS=["streaming-system-kafka-0.kafka.svc.cluster.local:9094"
 KAFKA_TOPIC="knative-broker-default-crypto"
 
 #Feast Config
-FEAST_PATH="./platform/feature-store/feature_store/feature_repo/"
+FEAST_PATH="./feature-repo"
 FEAST_FEATURE_VIEW="crypto_stats"
 FEAST_SOURCE_TABLE="crypto_source"
 
