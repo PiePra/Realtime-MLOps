@@ -73,6 +73,9 @@ online-learning:
 	kubectl apply -f demonstration/continual-learning/tasks
 	kubectl apply -f demonstration/continual-learning/pipelines
 	kubectl apply -f demonstration/continual-learning/eventlistener
+
+webapp:
+	kubectl apply -f demonstration/webapp/deployment
 	
 install:
-	make cluster connect feature-store streaming-system training inference online-learning
+	make cluster connect feature-store streaming-system training inference online-learning webapp
