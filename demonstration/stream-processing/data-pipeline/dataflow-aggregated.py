@@ -132,7 +132,6 @@ def output_builder(worker_index: int, worker_count: int) -> callable:
 def run_dataflow() -> None:
     """Main function to run the dataflow"""
     cc = SystemClockConfig()
-    #cc = TestingClockConfig(start_at=datetime(2022, 1, 1, 13), item_incr = timedelta(minutes=1))
     wc = TumblingWindowConfig(length=timedelta(minutes=5))
     input_config = KafkaInputConfig(KAFKA_BOOTSTRAP_SERVERS, KAFKA_TOPIC, tail=True, starting_offset="end")
     flow = Dataflow()
