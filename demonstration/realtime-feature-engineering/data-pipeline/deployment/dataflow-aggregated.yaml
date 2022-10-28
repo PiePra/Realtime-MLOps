@@ -32,7 +32,7 @@ data:
     get_feature_store() -> FeatureStore:\n    \"\"\"Create Feature Store Object\"\"\"\n
     \   return FeatureStore(FEAST_PATH)\n\ndef get_cloudevent(data: OHLC) -> CloudEvent:\n
     \   \"\"\"Create the Cloudevent from attributes and data\"\"\"\n    attributes
-    = {\n        \"type\": f\"{CE_ATTR_TYPE}_\",\n        \"source\": CE_ATTR_SOURCE,\n
+    = {\n        \"type\": f\"{CE_ATTR_TYPE}{data.symbol}\",\n        \"source\": CE_ATTR_SOURCE,\n
     \   }\n    event = data.__dict__.copy()\n    event[\"type\"]=\"ground_truth\"\n    return
     CloudEvent(attributes, event)\n\ndef get_df(data: OHLC) -> pd.DataFrame:\n    \"\"\"Create
     pandas dataframe to send to feast\"\"\"\n    data_dict = data.__dict__.copy()\n    for

@@ -96,7 +96,7 @@ def get_feature_store() -> FeatureStore:
 def get_cloudevent(data: OHLC) -> CloudEvent:
     """Create the Cloudevent from attributes and data"""
     attributes = {
-        "type": f"{CE_ATTR_TYPE}_",
+        "type": f"{CE_ATTR_TYPE}{data.symbol}",
         "source": CE_ATTR_SOURCE,
     }
     event = data.__dict__.copy()
