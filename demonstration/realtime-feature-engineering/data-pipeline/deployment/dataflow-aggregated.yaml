@@ -14,7 +14,7 @@ data:
     Attributes\nCE_ATTR_TYPE=\"cluster.local.aggregated_\"\nCE_ATTR_SOURCE=\"https://cluster.local/dataflow\"\n\n@dataclass\nclass
     OHLC:\n    \"\"\"Class representing output Feature Vector\"\"\"\n    symbol: str\n
     \   open: float\n    high: float\n    low: float\n    close: float\n    timestamp_created:
-    datetime\n    timestamp: datetime = field(default_factory=datetime.utcnow().timestamp)\n\n@dataclass\nclass
+    datetime\n    timestamp: datetime\n\n@dataclass\nclass
     PriceMessage:\n    \"\"\"Class representing a Price for given Time\"\"\"\n    price:
     float\n    timestamp: datetime\n\ndef get_message(msg: Tuple[str, Tuple]) -> Tuple[str,
     PriceMessage]:\n    \"\"\"Formats msg to use symbol as key and content as tuple\"\"\"\n
@@ -26,7 +26,7 @@ data:
     from prices\"\"\"\n    key, price_message = msg\n    prices = [item.price for
     item in price_message]\n    timestamps = [item.timestamp for item in price_message]\n\n
     \   output = OHLC(\n        symbol=key,\n        low=min(prices),\n        high=max(prices),\n
-    \       open=prices[0],\n        close=prices[-1],\n        timestamp_created=timestamps[-1]\n
+    \       open=prices[0],\n        close=prices[-1],\n        timestamp_created=timestamps[-1],\n        timestamp=datetime.utcnow().timestamp()\n
     \   )\n    return output\n\ndef get_engine() -> sqlalchemy.engine.Engine:\n    \"\"\"Create
     DB Connection Engine\"\"\"\n    return create_engine(f\"{DB_TYPE}://{PG_USER}:{PG_PASS}@{PG_HOST}:{PG_PORT}/{PG_DB}\")\n\ndef
     get_feature_store() -> FeatureStore:\n    \"\"\"Create Feature Store Object\"\"\"\n

@@ -49,7 +49,7 @@ class OHLC:
     low: float
     close: float
     timestamp_created: datetime
-    timestamp: datetime = field(default_factory=datetime.utcnow().timestamp)
+    timestamp: datetime
 
 @dataclass
 class PriceMessage:
@@ -81,7 +81,8 @@ def get_vals(msg: List[Tuple[str, PriceMessage]]) -> OHLC:
         high=max(prices),
         open=prices[0],
         close=prices[-1],
-        timestamp_created=timestamps[-1]
+        timestamp_created=timestamps[-1],
+        timestamp = datetime.utcnow().timestamp()
     )
     return output
 
