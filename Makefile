@@ -39,6 +39,7 @@ streaming-system:
 	echo "---- Installing Streaming System ----" 
 	kubectl kustomize platform/streaming-system/ | kubectl create -f -
 	kubectl wait deployment -n strimzi strimzi-cluster-operator --for condition=Available=True --timeout=180s
+	sleep 5s
 	kubectl wait pods -n kafka -l strimzi.io/name=streaming-system-zookeeper --for condition=Ready --timeout=180s
 	sleep 5s
 	kubectl wait pods -n kafka -l strimzi.io/name=streaming-system-kafka --for condition=Ready --timeout=180s

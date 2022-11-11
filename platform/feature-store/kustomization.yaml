@@ -17,7 +17,7 @@ helmCharts:
       pullPolicy: IfNotPresent
       tag: 0.24.1
 - name: redis
-  repo: https://charts.bitnami.com/charts
+  repo: https://charts.bitnami.com/bitnami
   version: 17.1.7
   releaseName: online-store
   namespace: feast
