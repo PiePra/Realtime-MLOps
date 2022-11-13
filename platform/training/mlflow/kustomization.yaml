@@ -4,7 +4,7 @@ resources:
 - mlflow.yaml
 helmCharts:
 - name: minio
-  repo: https://charts.bitnami.com/charts
+  repo: https://charts.bitnami.com/bitnami
   version: 11.10.2
   releaseName: mlflow
   namespace: mlflow

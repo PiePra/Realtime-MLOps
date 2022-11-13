@@ -1,9 +1,21 @@
-# Realtime-MLOps: A combination of open-source technologies to operate machine learning in realtime.
+# Realtime-MLOps: A framework of open-source technologies to design real-time ml systems.
 
-Realtime MLOps combines selected open-source tools to operate machine learning models with a focus on realtime ml.
-This setup enables and demonstrates online inferencing, realtime monitoring and continual learning with automated statefull retrainings while also providing a matured Kubernetes-native MLOps platform. 
+Realtime MLOps provides a cloud-native approach to design machine learning systems enabling the use of real-time.
+This setup enables and demonstrates real-time feature engineering, online inferencing, real-time monitoring and continual learning as a a matured Kubernetes-native MLOps platform. 
 
-The platform is divided in 4 modules to enable different areas of realtime MLOps. 
+- [Realtime-MLOps: A framework of open-source technologies to design real-time ml systems.](#realtime-mlops-a-framework-of-open-source-technologies-to-design-real-time-ml-systems)
+- [Summary](#summary)
+- [Quickstart](#quickstart)
+- [Access](#access)
+- [Demonstration](#demonstration)
+  - [Real-time Feature Engineering](#real-time-feature-engineering)
+  - [Online Inferencing](#online-inferencing)
+  - [Continual Learning](#continual-learning)
+  - [Real-time Monitoring](#real-time-monitoring)
+
+# Summary
+
+The platform is divided in five modules to enable different areas of real-time MLOps. 
 
 Kubernetes is used in conjunction with Github to provide an Infrastructure-as-Code enabled way of managing the platform.
 Strimzi Kafka Operator and KNative Eventing are used to provide and abstract streaming capabilities in a Kubernetes-native way.
@@ -11,68 +23,41 @@ To orchestrate modular ml pipelines tekton is used along with mlflow to store ex
 Inferencing is done by using KServe and Prometheus to allow model serving, model updating and model monitoring. 
 Feast is used as a feature store to orchestrate and serve features at low latency. 
 
-# Setup environment
-create conda environment
+# Quickstart
+Download the repistory and create conda environment
 `make env`
 and activate
 `conda activate realtime-mlops`
 
-# Quickstart
-Simply use `make install` to install all components and run the examples.
-
-# Kind Setup
-Installation is provided in the form of kustomization and yaml manifests. The setup is developed and tested on Kubernetes v1.23.
-A kind configuration is provided to enable a local installation. 
-```bash
-kind create cluster --name realtime-mlops --config kind/kind.yaml
-```
-Depending on the system there might be the necessity to increase inotify instances:
-```bash
-sudo sysctl fs.inotify.max_user_watches=524288
-sudo sysctl fs.inotify.max_user_instances=512
-```
+Simply use `make install` to install all components and run the demonstration examples.
 
 # Access
-Telepresence provides a convinient way to access internal Kubernetes services externally. Install Telepresence according to the installation docs or by using:
-```bash
-sudo curl -fL https://app.getambassador.io/download/tel2/linux/amd64/latest/telepresence -o /usr/local/bin/telepresence
-sudo chmod a+x /usr/local/bin/telepresence
-```
-then run
-```
-telepresence helm install
-telepresence connect
-```
+Telepresence provides a convinient way to access internal Kubernetes services externally. 
 
 Web interfaces then are available at:
-- argocd: https://argocd-server.argocd.svc.cluster.local
 - prometheus: http://prometheus.prometheus.svc.cluster.local/
-- grafana: http://grafana.prometheus.svc.cluster.local:3000/
 - tekton: http://tekton-dashboard.tekton-pipelines.svc.cluster.local:9097
 - mlflow: http://mlflow.mlflow.svc.cluster.local/
 - minio: http://mlflow-minio.mlflow.svc.cluster.local:9000/
+- demo-app: http://webapp.default.svc.cluster.local/
 
-due to timeouts or changes to services it is required to run
+If the setup did run successfully but the web UIs are not available it may help to quit and connect telepresence client again.
 ```
 telepresence quit
-telepresence conenct
+telepresence connect
 ```
-if telepresence resolution is not working propperly
 
-# Install platform
+# Demonstration
+Check out the demonstraion for a real-time ml use-case.
 
-Generate and create platform manifests on Kubuernetes using kustomize.
+## Real-time Feature Engineering
+see demonstration/realtime-feature-engineering/README.md
 
-Start with the feast feature store
-./platform/feast/README.md
-```bash
-kubectl kustomize --enable-helm ./platform/feast | kubectl create -n feast -f -
-```
-Move to streaming system
-./platform/streaming-system/README.md
+## Online Inferencing
+see demonstration/online-inferencing/README.md
 
-Move to training
-./platform/training/README.md
+## Continual Learning
+see demonstration/continual-learning/README.md
 
-head to inference
-./platform/inference/README.md
+## Real-time Monitoring
+see demonstration/realtime-monitoring/README.md
