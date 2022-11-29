@@ -20,10 +20,15 @@ The platform is divided into five modules to enable different aspects of a real-
 ![](data/high-level.drawio.png)
 
 1. Kubernetes is used in conjunction with Github to provide an Infrastructure-as-Code enabled way of managing the platform.
-2. Strimzi Kafka Operator and KNative Eventing are used to provide and abstract streaming capabilities in a Kubernetes-native way. Stream Processing is accomplished by using Bytewax Dataflows for variuous use-cases.
+2. Strimzi Kafka Operator and KNative Eventing are used to provide and abstract streaming capabilities in a Kubernetes-native way. Stream Processing is accomplished by using Bytewax Dataflows for various use-cases.
 3. Feast is used to create a feature store to centralize features and provide access to real-time and historical features. Feast is used to implement a redis online store and a postgresql offline store.
 4. To orchestrate modular ml pipelines tekton is used alongside with mlflow to store experiment metadata and model artifacts. Tekton enables reusable event triggered pipeline runs.
-5. Inferencing is done by using KServe and Prometheus to allow model serving, model updating and model monitoring. 
+5. Inferencing is done using KServe and Prometheus to allow model serving, model updating and model monitoring. 
+
+The following figure shows the frameworks composition of components and flow of information.
+
+![](data/detailed-architecture.drawio.png)
+
 
 # 3. Quickstart
 Download the repistory and create conda environment
@@ -53,13 +58,13 @@ telepresence connect
 Check out the demonstraion for a real-time ml use-case.
 
 ## 5.1. Real-time Feature Engineering
-see demonstration/realtime-feature-engineering/README.md
+see [Real-time Feature Engineering](demonstration/realtime-feature-engineering/README.md)
 
 ## 5.2. Online Inferencing
-see demonstration/online-inferencing/README.md
+see [Online Inferencing](demonstration/online-inferencing/README.md)
 
 ## 5.3. Continual Learning
-see demonstration/continual-learning/README.md
+see [Continual Learning](demonstration/continual-learning/README.md)
 
 ## 5.4. Real-time Monitoring
-see demonstration/realtime-monitoring/README.md
+see [Real-time Monitoring](demonstration/realtime-monitoring/README.md)
